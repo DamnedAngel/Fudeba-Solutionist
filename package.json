@@ -1,5 +1,5 @@
 {
-  "name": "sln-explorer",
+  "name": "fudeba-solutionist",
   "displayName": "Fudeba Solutionist",
   "repository": { "type": "git", "url": "https://github.com/DamnedAngel/Fudeba-Solutionist.git" },
   "description": "A Visual Studio-style Solution Explorer for generic Microsoft Visual Studio solutions (.sln/.slnx), with specialized features for MSX projects. It works in pair with the MSX templates for Visual Studio and the ZOO framework.",

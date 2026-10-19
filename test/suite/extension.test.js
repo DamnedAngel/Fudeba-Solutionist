@@ -34,7 +34,7 @@ function answer(map) {
 
 suite('Solution Explorer', function () {
   suiteSetup(async function () {
-    const ext = vscode.extensions.getExtension('damnedangel.sln-explorer');
+    const ext = vscode.extensions.getExtension('damnedangel.fudeba-solutionist');
     assert.ok(ext, 'extension is installed in the test host');
     api = await ext.activate();
     await until(() => api.controller.model, 15000, 'the solution to load');

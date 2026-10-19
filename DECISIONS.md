@@ -120,7 +120,7 @@ Separate from Alchemia Z (its own folder, its own repo-to-be). Nothing here is c
 - `npm run test:vscode`: 9 tests in the installed VS Code: tree, edit a build action, dependency dialog,
   dependency-ordered build through real tasks, failing build, filters with drag-and-drop, configuration switch,
   new project from the installed MSX-DOS Overlay template.
-- Packaged: `sln-explorer-0.0.1.vsix`.
+- Packaged: `fudeba-solutionist-0.0.1.vsix`.
 - Never run: Linux; the real MSX `make.py` build (tests substitute `echo` commands so no toolchain is needed).
 
 ## Icons (user request: VS-style icons, customizable at run time)
@@ -217,3 +217,10 @@ Separate from Alchemia Z (its own folder, its own repo-to-be). Nothing here is c
   owners, SDCC/ZOO, MSX trademark, "Fudeba" slang), diagnostics for bug reports (Copy diagnostics, Open settings, Report an
   issue = GitHub issues of `repository` with the diagnostics prefilled). The author line "Danilo Angelo" comes from the
   template headers ("by Danilo Angelo"); change it in `src/aboutPanel.js` if wanted.
+
+## Extension id
+
+- The extension id is `damnedangel.fudeba-solutionist` (package.json `name`; it was `sln-explorer`). Only the id changed: the
+  commands (`slnExplorer.*`), the settings (`slnExplorer.*`) and the view ids keep their names, so existing settings still apply.
+  What the id change resets for an existing install: the extension's per-workspace memory (last solution, selected
+  configuration, startup project). Uninstall the old `damnedangel.sln-explorer` when upgrading (two copies would clash).
