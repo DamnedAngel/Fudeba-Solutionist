@@ -155,7 +155,9 @@ suite('Solution Explorer', function () {
   });
 
   test('build output lands in the Problems panel with explanations and quick fixes', async () => {
-    const cmd = "echo Processing C file mdo.c... && echo mdo.c:12: error 20: Undefined identifier 'x' && echo ..\\libs\\util\\printf.c:144: warning 196: pointer target lost const qualifier && echo ?ASlink-Warning-Undefined Global '_foo' referenced by module 'm' && echo ERROR: Ship.zml:7: Duplicate member x in class Ship.";
+    // cmd.exe's echo keeps single quotes, /bin/sh's eats them: escape them on Linux so both print what a real tool prints
+    const Q = process.platform === 'win32' ? "'" : "\\'";
+    const cmd = "echo Processing C file mdo.c... && echo mdo.c:12: error 20: Undefined identifier 'x' && echo ..\\libs\\util\\printf.c:144: warning 196: pointer target lost const qualifier && echo ?ASlink-Warning-Undefined Global " + Q + "_foo" + Q + " referenced by module " + Q + "m" + Q + " && echo ERROR: Ship.zml:7: Duplicate member x in class Ship.";
     const restore = answer({ showInputBox: async (o) => (/NMakeBuildCommandLine/.test(o.title) ? cmd : undefined) });
     try {
       const game = await projectNode('Game');
