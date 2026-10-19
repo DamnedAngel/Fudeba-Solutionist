@@ -27,15 +27,15 @@ class Problems {
       vscode.workspace.registerTextDocumentContentProvider(SCHEME, { provideTextDocumentContent: (uri) => this.docs.get(uri.path) || '', onDidChange: this._emitter.event }),
       vscode.languages.registerCodeActionsProvider({ pattern: '**' }, this, { providedCodeActionKinds: [vscode.CodeActionKind.QuickFix] }),
       vscode.window.registerTerminalLinkProvider(this),
-      vscode.commands.registerCommand('slnExplorer.explainDiagnostic', (key) => this.showExplanation(key)),
-      vscode.commands.registerCommand('slnExplorer.searchDiagnostic', (key) => this.search(key)),
-      vscode.commands.registerCommand('slnExplorer.findCrashLine', (key) => this.findCrash(key)),
+      vscode.commands.registerCommand('fudebaSolutionist.explainDiagnostic', (key) => this.showExplanation(key)),
+      vscode.commands.registerCommand('fudebaSolutionist.searchDiagnostic', (key) => this.search(key)),
+      vscode.commands.registerCommand('fudebaSolutionist.findCrashLine', (key) => this.findCrash(key)),
     );
   }
 
   static keyOf(uri, line, d) { return `${uri.toString()}|${line}|${d.source}|${d.code || ''}|${d.message}`; }
 
-  enabled() { return vscode.workspace.getConfiguration('slnExplorer').get('problems') !== false; }
+  enabled() { return vscode.workspace.getConfiguration('fudebaSolutionist').get('problems') !== false; }
 
   /** Called when a project starts building: its old problems are stale. */
   startProject(step, n, projectFile) {
@@ -82,18 +82,18 @@ class Problems {
       const e = explain(m.diag);
       if (e) {
         const a = new vscode.CodeAction(`Explain: ${e.title}`, vscode.CodeActionKind.QuickFix);
-        a.command = { command: 'slnExplorer.explainDiagnostic', title: 'Explain', arguments: [key] };
+        a.command = { command: 'fudebaSolutionist.explainDiagnostic', title: 'Explain', arguments: [key] };
         a.diagnostics = [diag]; a.isPreferred = true;
         out.push(a);
       }
       const s = new vscode.CodeAction('Search the web for this error', vscode.CodeActionKind.QuickFix);
-      s.command = { command: 'slnExplorer.searchDiagnostic', title: 'Search', arguments: [key] };
+      s.command = { command: 'fudebaSolutionist.searchDiagnostic', title: 'Search', arguments: [key] };
       s.diagnostics = [diag];
       out.push(s);
       const c = m.diag.crash;
       if (c && c.command && c.sourceFile && /^sdas/.test(c.tool)) {
         const f = new vscode.CodeAction(`Find the line that crashes ${c.tool}`, vscode.CodeActionKind.QuickFix);
-        f.command = { command: 'slnExplorer.findCrashLine', title: 'Find the crashing line', arguments: [key] };
+        f.command = { command: 'fudebaSolutionist.findCrashLine', title: 'Find the crashing line', arguments: [key] };
         f.diagnostics = [diag]; f.isPreferred = !e;
         out.push(f);
       }
@@ -105,7 +105,7 @@ class Problems {
     const m = this.meta.get(key);
     const e = m && explain(m.diag);
     if (!e) return;
-    const url = searchUrl(m.diag, vscode.workspace.getConfiguration('slnExplorer').get('searchUrl'));
+    const url = searchUrl(m.diag, vscode.workspace.getConfiguration('fudebaSolutionist').get('searchUrl'));
     const md = `# ${e.title}\n\n${e.body}\n\n---\n\n[Search the web for this error](${url})\n`;
     const p = `/${e.title.replace(/[^\w.-]+/g, '_').slice(0, 60)}.md`;
     this.docs.set(p, md);
@@ -117,7 +117,7 @@ class Problems {
   search(key) {
     const m = this.meta.get(key);
     if (!m) return;
-    return vscode.env.openExternal(vscode.Uri.parse(searchUrl(m.diag, vscode.workspace.getConfiguration('slnExplorer').get('searchUrl'))));
+    return vscode.env.openExternal(vscode.Uri.parse(searchUrl(m.diag, vscode.workspace.getConfiguration('fudebaSolutionist').get('searchUrl'))));
   }
 
   /** Locates the line that makes a silently crashing assembler die and reports it as a problem on that line. */
@@ -141,7 +141,7 @@ class Problems {
     const pos = new vscode.Position(r.line - 1, 0);
     ed.selection = new vscode.Selection(pos, doc.lineAt(r.line - 1).range.end);
     ed.revealRange(new vscode.Range(pos, pos), vscode.TextEditorRevealType.InCenter);
-    vscode.window.showInformationMessage(`${c.tool} crashes on line ${r.line}: ${r.text.trim()}`, 'Explain').then((x) => { if (x) vscode.commands.executeCommand('slnExplorer.explainDiagnostic', Problems.keyOf(uri, r.line - 1, { source: d.source, code: 'crash', message: d.message })); });
+    vscode.window.showInformationMessage(`${c.tool} crashes on line ${r.line}: ${r.text.trim()}`, 'Explain').then((x) => { if (x) vscode.commands.executeCommand('fudebaSolutionist.explainDiagnostic', Problems.keyOf(uri, r.line - 1, { source: d.source, code: 'crash', message: d.message })); });
   }
 
   // ---- terminal links: file:line in the build output opens the file ------------------------------

@@ -27,8 +27,8 @@
   "activationEvents": [
     "workspaceContains:**/*.sln",
     "workspaceContains:**/*.slnx",
-    "onView:slnExplorer.tree",
-    "onCommand:slnExplorer.newProject"
+    "onView:fudebaSolutionist.tree",
+    "onCommand:fudebaSolutionist.newProject"
   ],
   "extensionKind": [
     "workspace"
@@ -48,16 +48,16 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "slnExplorer",
+          "id": "fudebaSolutionist",
           "title": "Fudeba Solutionist",
           "icon": "media/sln.svg"
         }
       ]
     },
     "views": {
-      "slnExplorer": [
+      "fudebaSolutionist": [
         {
-          "id": "slnExplorer.tree",
+          "id": "fudebaSolutionist.tree",
           "name": "Fudeba Solutionist",
           "icon": "media/sln.svg",
           "contextualTitle": "Fudeba Solutionist"
@@ -66,198 +66,198 @@
     },
     "viewsWelcome": [
       {
-        "view": "slnExplorer.tree",
-        "contents": "No solution found in this folder.\n[Open Solution...](command:slnExplorer.openSolution)\n[New Project from Template...](command:slnExplorer.newProject)",
-        "when": "!slnExplorer.hasSolution"
+        "view": "fudebaSolutionist.tree",
+        "contents": "No solution found in this folder.\n[Open Solution...](command:fudebaSolutionist.openSolution)\n[New Project from Template...](command:fudebaSolutionist.newProject)",
+        "when": "!fudebaSolutionist.hasSolution"
       }
     ],
     "commands": [
       {
-        "command": "slnExplorer.openSolution",
+        "command": "fudebaSolutionist.openSolution",
         "title": "Open Solution...",
         "category": "Solution Explorer",
         "icon": "$(folder-opened)"
       },
       {
-        "command": "slnExplorer.refresh",
+        "command": "fudebaSolutionist.refresh",
         "title": "Refresh",
         "category": "Solution Explorer",
         "icon": "$(refresh)"
       },
       {
-        "command": "slnExplorer.selectConfiguration",
+        "command": "fudebaSolutionist.selectConfiguration",
         "title": "Select Solution Configuration...",
         "category": "Solution Explorer",
         "icon": "$(settings-gear)"
       },
       {
-        "command": "slnExplorer.newProject",
+        "command": "fudebaSolutionist.newProject",
         "title": "New Project from Template...",
         "category": "Solution Explorer",
         "icon": "$(add)"
       },
       {
-        "command": "slnExplorer.importTemplate",
+        "command": "fudebaSolutionist.importTemplate",
         "title": "Import Project Template (.zip)...",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.buildSolution",
+        "command": "fudebaSolutionist.buildSolution",
         "title": "Build Solution",
         "category": "Solution Explorer",
         "icon": "$(play)"
       },
       {
-        "command": "slnExplorer.rebuildSolution",
+        "command": "fudebaSolutionist.rebuildSolution",
         "title": "Rebuild Solution",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.cleanSolution",
+        "command": "fudebaSolutionist.cleanSolution",
         "title": "Clean Solution",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.cancelBuild",
+        "command": "fudebaSolutionist.cancelBuild",
         "title": "Cancel Build",
         "category": "Solution Explorer",
         "icon": "$(debug-stop)"
       },
       {
-        "command": "slnExplorer.build",
+        "command": "fudebaSolutionist.build",
         "title": "Build",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.buildOnly",
+        "command": "fudebaSolutionist.buildOnly",
         "title": "Build (Without Dependencies)",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.rebuild",
+        "command": "fudebaSolutionist.rebuild",
         "title": "Rebuild",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.clean",
+        "command": "fudebaSolutionist.clean",
         "title": "Clean",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.buildStartup",
+        "command": "fudebaSolutionist.buildStartup",
         "title": "Build Startup Project",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.setStartup",
+        "command": "fudebaSolutionist.setStartup",
         "title": "Set as Startup Project",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.editDependencies",
+        "command": "fudebaSolutionist.editDependencies",
         "title": "Project Dependencies...",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.removeProject",
+        "command": "fudebaSolutionist.removeProject",
         "title": "Remove from Solution...",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.about",
+        "command": "fudebaSolutionist.about",
         "title": "About Fudeba Solutionist",
         "category": "Solution Explorer",
         "icon": "$(info)"
       },
       {
-        "command": "slnExplorer.projectProperties",
+        "command": "fudebaSolutionist.projectProperties",
         "title": "MSX Project Settings...",
         "category": "Solution Explorer",
         "icon": "$(settings-gear)"
       },
       {
-        "command": "slnExplorer.removeDependency",
+        "command": "fudebaSolutionist.removeDependency",
         "title": "Remove Dependency",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.showBuildOrder",
+        "command": "fudebaSolutionist.showBuildOrder",
         "title": "Show Build Order",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.editAction",
+        "command": "fudebaSolutionist.editAction",
         "title": "Edit Build Action...",
         "category": "Solution Explorer",
         "icon": "$(edit)"
       },
       {
-        "command": "slnExplorer.runAction",
+        "command": "fudebaSolutionist.runAction",
         "title": "Run This Action",
         "category": "Solution Explorer",
         "icon": "$(play)"
       },
       {
-        "command": "slnExplorer.openProjectFile",
+        "command": "fudebaSolutionist.openProjectFile",
         "title": "Open Project File",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.newFilter",
+        "command": "fudebaSolutionist.newFilter",
         "title": "New Filter...",
         "category": "Solution Explorer",
         "icon": "$(new-folder)"
       },
       {
-        "command": "slnExplorer.renameFilter",
+        "command": "fudebaSolutionist.renameFilter",
         "title": "Rename Filter...",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.deleteFilter",
+        "command": "fudebaSolutionist.deleteFilter",
         "title": "Delete Filter",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.addExistingFile",
+        "command": "fudebaSolutionist.addExistingFile",
         "title": "Add Existing File...",
         "category": "Solution Explorer",
         "icon": "$(file-add)"
       },
       {
-        "command": "slnExplorer.removeFromProject",
+        "command": "fudebaSolutionist.removeFromProject",
         "title": "Remove from Project",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.revealInOS",
+        "command": "fudebaSolutionist.revealInOS",
         "title": "Reveal in File Explorer",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.copyPath",
+        "command": "fudebaSolutionist.copyPath",
         "title": "Copy Path",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.chooseIconTheme",
+        "command": "fudebaSolutionist.chooseIconTheme",
         "title": "Choose Icon Theme...",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.setIcon",
+        "command": "fudebaSolutionist.setIcon",
         "title": "Set Icon...",
         "category": "Solution Explorer"
       },
       {
-        "command": "slnExplorer.reloadIcons",
+        "command": "fudebaSolutionist.reloadIcons",
         "title": "Reload Icons",
         "category": "Solution Explorer"
       }
     ],
     "taskDefinitions": [
       {
-        "type": "slnExplorer",
+        "type": "fudebaSolutionist",
         "required": [
           "project",
           "action"
@@ -274,280 +274,280 @@
     ],
     "keybindings": [
       {
-        "command": "slnExplorer.removeProject",
+        "command": "fudebaSolutionist.removeProject",
         "key": "delete",
-        "when": "focusedView == slnExplorer.tree && listFocus && !inputFocus && viewItem =~ /^project/"
+        "when": "focusedView == fudebaSolutionist.tree && listFocus && !inputFocus && viewItem =~ /^project/"
       },
       {
-        "command": "slnExplorer.buildSolution",
+        "command": "fudebaSolutionist.buildSolution",
         "key": "ctrl+shift+\\",
-        "when": "slnExplorer.hasSolution && !slnExplorer.building"
+        "when": "fudebaSolutionist.hasSolution && !fudebaSolutionist.building"
       },
       {
-        "command": "slnExplorer.buildSolution",
+        "command": "fudebaSolutionist.buildSolution",
         "key": "ctrl+shift+oem_102",
-        "when": "slnExplorer.hasSolution && !slnExplorer.building"
+        "when": "fudebaSolutionist.hasSolution && !fudebaSolutionist.building"
       },
       {
-        "command": "slnExplorer.rebuildSolution",
+        "command": "fudebaSolutionist.rebuildSolution",
         "key": "ctrl+shift+b",
-        "when": "slnExplorer.hasSolution && !slnExplorer.building"
+        "when": "fudebaSolutionist.hasSolution && !fudebaSolutionist.building"
       }
     ],
     "menus": {
       "view/title": [
         {
-          "command": "slnExplorer.about",
-          "when": "view == slnExplorer.tree",
+          "command": "fudebaSolutionist.about",
+          "when": "view == fudebaSolutionist.tree",
           "group": "9_about@1"
         },
         {
-          "command": "slnExplorer.buildSolution",
-          "when": "view == slnExplorer.tree && slnExplorer.hasSolution && !slnExplorer.building",
+          "command": "fudebaSolutionist.buildSolution",
+          "when": "view == fudebaSolutionist.tree && fudebaSolutionist.hasSolution && !fudebaSolutionist.building",
           "group": "navigation@1"
         },
         {
-          "command": "slnExplorer.cancelBuild",
-          "when": "view == slnExplorer.tree && slnExplorer.building",
+          "command": "fudebaSolutionist.cancelBuild",
+          "when": "view == fudebaSolutionist.tree && fudebaSolutionist.building",
           "group": "navigation@1"
         },
         {
-          "command": "slnExplorer.newProject",
-          "when": "view == slnExplorer.tree",
+          "command": "fudebaSolutionist.newProject",
+          "when": "view == fudebaSolutionist.tree",
           "group": "navigation@2"
         },
         {
-          "command": "slnExplorer.selectConfiguration",
-          "when": "view == slnExplorer.tree && slnExplorer.hasSolution",
+          "command": "fudebaSolutionist.selectConfiguration",
+          "when": "view == fudebaSolutionist.tree && fudebaSolutionist.hasSolution",
           "group": "navigation@3"
         },
         {
-          "command": "slnExplorer.refresh",
-          "when": "view == slnExplorer.tree",
+          "command": "fudebaSolutionist.refresh",
+          "when": "view == fudebaSolutionist.tree",
           "group": "navigation@4"
         },
         {
-          "command": "slnExplorer.openSolution",
-          "when": "view == slnExplorer.tree",
+          "command": "fudebaSolutionist.openSolution",
+          "when": "view == fudebaSolutionist.tree",
           "group": "1_solution@1"
         },
         {
-          "command": "slnExplorer.rebuildSolution",
-          "when": "view == slnExplorer.tree && slnExplorer.hasSolution",
+          "command": "fudebaSolutionist.rebuildSolution",
+          "when": "view == fudebaSolutionist.tree && fudebaSolutionist.hasSolution",
           "group": "2_build@2"
         },
         {
-          "command": "slnExplorer.cleanSolution",
-          "when": "view == slnExplorer.tree && slnExplorer.hasSolution",
+          "command": "fudebaSolutionist.cleanSolution",
+          "when": "view == fudebaSolutionist.tree && fudebaSolutionist.hasSolution",
           "group": "2_build@3"
         },
         {
-          "command": "slnExplorer.showBuildOrder",
-          "when": "view == slnExplorer.tree && slnExplorer.hasSolution",
+          "command": "fudebaSolutionist.showBuildOrder",
+          "when": "view == fudebaSolutionist.tree && fudebaSolutionist.hasSolution",
           "group": "2_build@4"
         },
         {
-          "command": "slnExplorer.importTemplate",
-          "when": "view == slnExplorer.tree",
+          "command": "fudebaSolutionist.importTemplate",
+          "when": "view == fudebaSolutionist.tree",
           "group": "3_templates@1"
         },
         {
-          "command": "slnExplorer.chooseIconTheme",
-          "when": "view == slnExplorer.tree",
+          "command": "fudebaSolutionist.chooseIconTheme",
+          "when": "view == fudebaSolutionist.tree",
           "group": "4_icons@1"
         }
       ],
       "view/item/context": [
         {
-          "command": "slnExplorer.buildSolution",
+          "command": "fudebaSolutionist.buildSolution",
           "when": "viewItem == solution",
           "group": "1_build@1"
         },
         {
-          "command": "slnExplorer.rebuildSolution",
+          "command": "fudebaSolutionist.rebuildSolution",
           "when": "viewItem == solution",
           "group": "1_build@2"
         },
         {
-          "command": "slnExplorer.cleanSolution",
+          "command": "fudebaSolutionist.cleanSolution",
           "when": "viewItem == solution",
           "group": "1_build@3"
         },
         {
-          "command": "slnExplorer.newProject",
+          "command": "fudebaSolutionist.newProject",
           "when": "viewItem == solution",
           "group": "2_add@1"
         },
         {
-          "command": "slnExplorer.selectConfiguration",
+          "command": "fudebaSolutionist.selectConfiguration",
           "when": "viewItem == solution",
           "group": "3_config@1"
         },
         {
-          "command": "slnExplorer.build",
+          "command": "fudebaSolutionist.build",
           "when": "viewItem =~ /^project(\\.|$)/",
           "group": "1_build@1"
         },
         {
-          "command": "slnExplorer.rebuild",
+          "command": "fudebaSolutionist.rebuild",
           "when": "viewItem =~ /^project(\\.|$)/",
           "group": "1_build@2"
         },
         {
-          "command": "slnExplorer.clean",
+          "command": "fudebaSolutionist.clean",
           "when": "viewItem =~ /^project(\\.|$)/",
           "group": "1_build@3"
         },
         {
-          "command": "slnExplorer.buildOnly",
+          "command": "fudebaSolutionist.buildOnly",
           "when": "viewItem =~ /^project(\\.|$)/",
           "group": "1_build@4"
         },
         {
-          "command": "slnExplorer.editDependencies",
+          "command": "fudebaSolutionist.editDependencies",
           "when": "viewItem =~ /^project(\\.|$)/",
           "group": "2_project@1"
         },
         {
-          "command": "slnExplorer.setStartup",
+          "command": "fudebaSolutionist.setStartup",
           "when": "viewItem =~ /^project(\\.|$)/",
           "group": "2_project@2"
         },
         {
-          "command": "slnExplorer.removeProject",
+          "command": "fudebaSolutionist.removeProject",
           "when": "viewItem =~ /^project/",
           "group": "9_remove@1"
         },
         {
-          "command": "slnExplorer.projectProperties",
+          "command": "fudebaSolutionist.projectProperties",
           "when": "viewItem =~ /\\.msx$/",
           "group": "inline@9"
         },
         {
-          "command": "slnExplorer.projectProperties",
+          "command": "fudebaSolutionist.projectProperties",
           "when": "viewItem =~ /\\.msx$/",
           "group": "2_project@0"
         },
         {
-          "command": "slnExplorer.openProjectFile",
+          "command": "fudebaSolutionist.openProjectFile",
           "when": "viewItem =~ /^project(\\.|$)/",
           "group": "2_project@3"
         },
         {
-          "command": "slnExplorer.newFilter",
+          "command": "fudebaSolutionist.newFilter",
           "when": "viewItem =~ /^project(\\.|$)/ || viewItem == filter",
           "group": "3_add@1"
         },
         {
-          "command": "slnExplorer.addExistingFile",
+          "command": "fudebaSolutionist.addExistingFile",
           "when": "viewItem =~ /^project(\\.|$)/ || viewItem == filter",
           "group": "3_add@2"
         },
         {
-          "command": "slnExplorer.revealInOS",
+          "command": "fudebaSolutionist.revealInOS",
           "when": "viewItem =~ /^project(\\.|$)/ || viewItem == file || viewItem == solution",
           "group": "9_os@1"
         },
         {
-          "command": "slnExplorer.copyPath",
+          "command": "fudebaSolutionist.copyPath",
           "when": "viewItem =~ /^project(\\.|$)/ || viewItem == file || viewItem == solution",
           "group": "9_os@2"
         },
         {
-          "command": "slnExplorer.renameFilter",
+          "command": "fudebaSolutionist.renameFilter",
           "when": "viewItem == filter",
           "group": "4_filter@1"
         },
         {
-          "command": "slnExplorer.deleteFilter",
+          "command": "fudebaSolutionist.deleteFilter",
           "when": "viewItem == filter",
           "group": "4_filter@2"
         },
         {
-          "command": "slnExplorer.removeFromProject",
+          "command": "fudebaSolutionist.removeFromProject",
           "when": "viewItem == file",
           "group": "4_file@1"
         },
         {
-          "command": "slnExplorer.editDependencies",
+          "command": "fudebaSolutionist.editDependencies",
           "when": "viewItem == deps",
           "group": "1_dep@1"
         },
         {
-          "command": "slnExplorer.removeDependency",
+          "command": "fudebaSolutionist.removeDependency",
           "when": "viewItem == dep",
           "group": "1_dep@1"
         },
         {
-          "command": "slnExplorer.editAction",
+          "command": "fudebaSolutionist.editAction",
           "when": "viewItem == action",
           "group": "inline"
         },
         {
-          "command": "slnExplorer.runAction",
+          "command": "fudebaSolutionist.runAction",
           "when": "viewItem == action",
           "group": "inline"
         },
         {
-          "command": "slnExplorer.editAction",
+          "command": "fudebaSolutionist.editAction",
           "when": "viewItem == action",
           "group": "1_action@1"
         },
         {
-          "command": "slnExplorer.runAction",
+          "command": "fudebaSolutionist.runAction",
           "when": "viewItem == action",
           "group": "1_action@2"
         },
         {
-          "command": "slnExplorer.build",
+          "command": "fudebaSolutionist.build",
           "when": "viewItem =~ /^project(\\.|$)/",
           "group": "inline@1"
         },
         {
-          "command": "slnExplorer.setIcon",
+          "command": "fudebaSolutionist.setIcon",
           "when": "viewItem =~ /^(solution|solutionFolder|project|projectMissing|actions|action|deps|filter|folder|file)/",
           "group": "9_icons@1"
         }
       ],
       "commandPalette": [
         {
-          "command": "slnExplorer.build",
+          "command": "fudebaSolutionist.build",
           "when": "false"
         },
         {
-          "command": "slnExplorer.buildOnly",
+          "command": "fudebaSolutionist.buildOnly",
           "when": "false"
         },
         {
-          "command": "slnExplorer.rebuild",
+          "command": "fudebaSolutionist.rebuild",
           "when": "false"
         },
         {
-          "command": "slnExplorer.clean",
+          "command": "fudebaSolutionist.clean",
           "when": "false"
         },
         {
-          "command": "slnExplorer.removeDependency",
+          "command": "fudebaSolutionist.removeDependency",
           "when": "false"
         },
         {
-          "command": "slnExplorer.editAction",
+          "command": "fudebaSolutionist.editAction",
           "when": "false"
         },
         {
-          "command": "slnExplorer.runAction",
+          "command": "fudebaSolutionist.runAction",
           "when": "false"
         },
         {
-          "command": "slnExplorer.renameFilter",
+          "command": "fudebaSolutionist.renameFilter",
           "when": "false"
         },
         {
-          "command": "slnExplorer.deleteFilter",
+          "command": "fudebaSolutionist.deleteFilter",
           "when": "false"
         },
         {
-          "command": "slnExplorer.removeFromProject",
+          "command": "fudebaSolutionist.removeFromProject",
           "when": "false"
         }
       ]
@@ -555,12 +555,12 @@
     "configuration": {
       "title": "Solution Explorer",
       "properties": {
-        "slnExplorer.solution": {
+        "fudebaSolutionist.solution": {
           "type": "string",
           "default": "",
           "description": "Solution file to show (absolute, or relative to the workspace folder). Empty: pick from the .sln/.slnx files found in the workspace."
         },
-        "slnExplorer.dependencyStorage": {
+        "fudebaSolutionist.dependencyStorage": {
           "type": "string",
           "enum": [
             "solution",
@@ -569,17 +569,17 @@
           "default": "solution",
           "description": "Where new project dependencies are written: the solution (like Visual Studio's Project Dependencies dialog) or a ProjectReference in the project file."
         },
-        "slnExplorer.stopOnError": {
+        "fudebaSolutionist.stopOnError": {
           "type": "boolean",
           "default": true,
           "description": "Stop a solution build at the first project that fails."
         },
-        "slnExplorer.msbuildPath": {
+        "fudebaSolutionist.msbuildPath": {
           "type": "string",
           "default": "msbuild",
           "description": "MSBuild executable used for C++ (non-Makefile) projects. Windows only."
         },
-        "slnExplorer.templateFolders": {
+        "fudebaSolutionist.templateFolders": {
           "type": "array",
           "items": {
             "type": "string"
@@ -587,7 +587,7 @@
           "default": [],
           "description": "Extra folders searched for project templates (.zip files with a .vstemplate, or unzipped template folders). The Visual Studio template folders in Documents are always searched."
         },
-        "slnExplorer.problemMatchers": {
+        "fudebaSolutionist.problemMatchers": {
           "type": "array",
           "items": {
             "type": "string"
@@ -595,7 +595,7 @@
           "default": [],
           "description": "Problem matchers applied to build output, e.g. [\"$gcc\"]."
         },
-        "slnExplorer.itemTypes": {
+        "fudebaSolutionist.itemTypes": {
           "type": "object",
           "additionalProperties": {
             "type": "string"
@@ -610,22 +610,22 @@
           },
           "description": "MSBuild item type used when adding a file with a given extension to a project that lists its files (anything else is added as None)."
         },
-        "slnExplorer.echoCommand": {
+        "fudebaSolutionist.echoCommand": {
           "type": "boolean",
           "default": true,
           "description": "Print each project command line under its Build started header."
         },
-        "slnExplorer.problems": {
+        "fudebaSolutionist.problems": {
           "type": "boolean",
           "default": true,
           "description": "Report errors and warnings found in the build output in the Problems panel, with explanations for cryptic SDAS/SDLD/SDCC messages."
         },
-        "slnExplorer.searchUrl": {
+        "fudebaSolutionist.searchUrl": {
           "type": "string",
           "default": "https://www.google.com/search?q={query}",
           "description": "Web search opened by \"Search the web for this error\". {query} is replaced by a generic description of the error (names from your code are left out)."
         },
-        "slnExplorer.iconTheme": {
+        "fudebaSolutionist.iconTheme": {
           "type": "string",
           "enum": [
             "vs",
@@ -635,17 +635,17 @@
           "enumDescriptions": [
             "Visual Studio style icons built into the extension.",
             "VS Code's own icons (codicons).",
-            "Icons found by name in slnExplorer.iconFolder (e.g. your copy of the Visual Studio Image Library); icons not found there use the built-in set."
+            "Icons found by name in fudebaSolutionist.iconFolder (e.g. your copy of the Visual Studio Image Library); icons not found there use the built-in set."
           ],
           "default": "vs",
           "description": "Icon set of the Solution Explorer. Changes apply immediately."
         },
-        "slnExplorer.iconFolder": {
+        "fudebaSolutionist.iconFolder": {
           "type": "string",
           "default": "",
           "description": "Folder searched (recursively) for SVG/PNG icons when iconTheme is \"folder\". Files are matched by name (Solution_16x.svg, CPPProjectNode_16x.svg, Folder_16x.svg ...); subfolders named light/dark supply theme variants. ~ and ${workspaceFolder} are expanded."
         },
-        "slnExplorer.icons": {
+        "fudebaSolutionist.icons": {
           "type": "object",
           "additionalProperties": {
             "oneOf": [
@@ -668,12 +668,12 @@
           "default": {},
           "markdownDescription": "Override single icons. Keys: `solution`, `solutionFolder`, `project.cpp`, `project.makefile`, `project.dotnet`, `project.shared`, `project.unknown`, `project.missing`, `folder`, `filter`, `file`, `file.c`, `file.h`, `file.asm`, `file.inc`, `file.zoo`, `file.missing`, `buildActions`, `action.build`, `action.rebuild`, `action.clean`, `dependencies`. A value is a codicon name (`\"tools\"`), an SVG/PNG path, or `{ \"light\": \"...\", \"dark\": \"...\" }`."
         },
-        "slnExplorer.sourceControl.icons": {
+        "fudebaSolutionist.sourceControl.icons": {
           "type": "boolean",
           "default": true,
           "markdownDescription": "Mark the files of the tree with their source control status (from VS Code's git support, so any git repository: GitHub and others): a padlock for checked in, a red check mark for changed, a green plus for new. The mark is drawn on the file's icon, so files under source control use the extension's own icons (the file icons setting `fileTheme` turns this off)."
         },
-        "slnExplorer.fileIcons": {
+        "fudebaSolutionist.fileIcons": {
           "type": "string",
           "enum": [
             "mixed",

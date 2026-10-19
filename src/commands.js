@@ -17,7 +17,7 @@ const { setSlnDependencies } = require('./core/sln');
 const { ZipArchive } = require('./core/zip');
 
 const NMAKE_PROP = { build: 'NMakeBuildCommandLine', clean: 'NMakeCleanCommandLine', rebuild: 'NMakeReBuildCommandLine' };
-const cfg = () => vscode.workspace.getConfiguration('slnExplorer');
+const cfg = () => vscode.workspace.getConfiguration('fudebaSolutionist');
 const warn = (m) => vscode.window.showWarningMessage(m);
 
 function register(context, ctl, tree, runner, view) {
@@ -38,7 +38,7 @@ function register(context, ctl, tree, runner, view) {
 
   // ---- solution -------------------------------------------------------------------------------
 
-  reg('slnExplorer.openSolution', async () => {
+  reg('fudebaSolutionist.openSolution', async () => {
     const found = await ctl.findSolutions();
     const items = found.map((f) => ({ label: path.basename(f), description: vscode.workspace.asRelativePath(f), file: f }));
     items.push({ label: '$(folder-opened) Browse...', file: null });
@@ -53,16 +53,16 @@ function register(context, ctl, tree, runner, view) {
     await ctl.open(file);
   });
 
-  reg('slnExplorer.refresh', () => ctl.reload());
+  reg('fudebaSolutionist.refresh', () => ctl.reload());
 
-  reg('slnExplorer.selectConfiguration', async () => {
+  reg('fudebaSolutionist.selectConfiguration', async () => {
     if (!needModel()) return;
     const pick = await vscode.window.showQuickPick(
       ctl.model.sol.configs.map((c) => ({ label: configLabel(ctl.model.sol, c), cfg: c, description: c === ctl.model.config ? 'active' : '' })), { placeHolder: 'Solution configuration' });
     if (pick) await ctl.setConfig(pick.cfg);
   });
 
-  reg('slnExplorer.reveal', async (id) => {
+  reg('fudebaSolutionist.reveal', async (id) => {
     const node = tree.cache.get(`prj:${id}`);
     if (node) await view.reveal(node, { select: true, focus: true });
   });
@@ -70,32 +70,32 @@ function register(context, ctl, tree, runner, view) {
   // ---- build ----------------------------------------------------------------------------------
 
   const solutionAction = (action) => () => (needModel() ? runner.run({ ids: null, action }) : null);
-  reg('slnExplorer.buildSolution', solutionAction('build'));
-  reg('slnExplorer.rebuildSolution', solutionAction('rebuild'));
-  reg('slnExplorer.cleanSolution', solutionAction('clean'));
-  reg('slnExplorer.cancelBuild', () => runner.cancel());
+  reg('fudebaSolutionist.buildSolution', solutionAction('build'));
+  reg('fudebaSolutionist.rebuildSolution', solutionAction('rebuild'));
+  reg('fudebaSolutionist.cleanSolution', solutionAction('clean'));
+  reg('fudebaSolutionist.cancelBuild', () => runner.cancel());
 
   const projectAction = (action, withDeps) => async (node) => {
     const e = await pickProject(node, `Project to ${action}`);
     if (e) await runner.run({ ids: [e.sln.id], action, withDeps });
   };
-  reg('slnExplorer.build', projectAction('build', true));
-  reg('slnExplorer.buildOnly', projectAction('build', false));
-  reg('slnExplorer.rebuild', projectAction('rebuild', true));
-  reg('slnExplorer.clean', projectAction('clean', false));
+  reg('fudebaSolutionist.build', projectAction('build', true));
+  reg('fudebaSolutionist.buildOnly', projectAction('build', false));
+  reg('fudebaSolutionist.rebuild', projectAction('rebuild', true));
+  reg('fudebaSolutionist.clean', projectAction('clean', false));
 
-  reg('slnExplorer.buildStartup', async () => {
+  reg('fudebaSolutionist.buildStartup', async () => {
     if (!needModel()) return;
     const id = ctl.startupId;
     if (!id || !ctl.model.entries.has(id)) { warn('No startup project is set. Right-click a project and choose "Set as Startup Project".'); return; }
     await runner.run({ ids: [id], action: 'build', withDeps: true });
   });
-  reg('slnExplorer.setStartup', async (node) => {
+  reg('fudebaSolutionist.setStartup', async (node) => {
     const e = await pickProject(node, 'Startup project');
     if (e) await ctl.setStartup(e.sln.id);
   });
 
-  reg('slnExplorer.showBuildOrder', () => {
+  reg('fudebaSolutionist.showBuildOrder', () => {
     if (!needModel()) return;
     try {
       const steps = plan(ctl.model, { ids: null, action: 'build' });
@@ -111,14 +111,14 @@ function register(context, ctl, tree, runner, view) {
 
   // ---- build actions (per project) ------------------------------------------------------------
 
-  reg('slnExplorer.editAction', async (node) => {
+  reg('fudebaSolutionist.editAction', async (node) => {
     const e = entryOf(node);
     if (!e || !node.action) return;
     const pd = e.data;
     if (pd.kind !== 'makefile') {
       const c = await vscode.window.showInformationMessage(
         `${e.sln.name} is not a Makefile project: its ${node.action} command is generated from the project type. Makefile (NMake) projects have editable build actions.`, 'Open Project File');
-      if (c) vscode.commands.executeCommand('slnExplorer.openProjectFile', node);
+      if (c) vscode.commands.executeCommand('fudebaSolutionist.openProjectFile', node);
       return;
     }
     const prop = NMAKE_PROP[node.action];
@@ -132,12 +132,12 @@ function register(context, ctl, tree, runner, view) {
     await ctl.run(() => edit.setConfigProperty(pd, prop, val), 'Edit build action');
   });
 
-  reg('slnExplorer.runAction', async (node) => {
+  reg('fudebaSolutionist.runAction', async (node) => {
     const e = entryOf(node);
     if (e && node.action) await runner.run({ ids: [e.sln.id], action: node.action, withDeps: false });
   });
 
-  reg('slnExplorer.openProjectFile', async (node) => {
+  reg('fudebaSolutionist.openProjectFile', async (node) => {
     const e = await pickProject(node, 'Project');
     if (e) await vscode.window.showTextDocument(vscode.Uri.file(e.data.file));
   });
@@ -182,7 +182,7 @@ function register(context, ctl, tree, runner, view) {
     }, 'Edit dependencies');
   }
 
-  reg('slnExplorer.editDependencies', async (node) => {
+  reg('fudebaSolutionist.editDependencies', async (node) => {
     const e = await pickProject(node, 'Project to edit dependencies of');
     if (!e) return;
     const m = ctl.model;
@@ -197,17 +197,17 @@ function register(context, ctl, tree, runner, view) {
     if (picks) await applyDependencies(e.sln.id, picks.map((p) => p.id));
   });
 
-  reg('slnExplorer.removeDependency', async (node) => {
+  reg('fudebaSolutionist.removeDependency', async (node) => {
     const e = entryOf(node);
     if (!e || !node.depId) return;
     await applyDependencies(e.sln.id, e.deps.filter((d) => d !== node.depId));
   });
 
-  reg('slnExplorer.about', () => AboutPanel.open(context, ctl));
+  reg('fudebaSolutionist.about', () => AboutPanel.open(context, ctl));
 
   // ---- MSX project settings dialog ----------------------------------------------------------------
 
-  reg('slnExplorer.projectProperties', async (node) => {
+  reg('fudebaSolutionist.projectProperties', async (node) => {
     const e = await pickProject(node, 'Project to configure');
     if (!e) return;
     const t = e.data.exists && e.data.kind === 'makefile' ? msxProjectType(e.data) : null;
@@ -218,7 +218,7 @@ function register(context, ctl, tree, runner, view) {
   // ---- remove a project from the solution --------------------------------------------------------
 
   /** Like Visual Studio's Remove: the solution forgets the project; its files stay on disk. */
-  reg('slnExplorer.removeProject', async (node) => {
+  reg('fudebaSolutionist.removeProject', async (node) => {
     // from the Delete key the command gets no node: use the selected project
     const sel = view.selection[0];
     const e = await pickProject(node || (sel && /^project/.test(sel.kind) ? sel : null), 'Project to remove from the solution');
@@ -247,7 +247,7 @@ function register(context, ctl, tree, runner, view) {
     return true;
   };
 
-  reg('slnExplorer.newFilter', async (node) => {
+  reg('fudebaSolutionist.newFilter', async (node) => {
     const e = entryOf(node);
     if (!e || !needFilters(e)) return;
     const parent = node.kind === 'filter' ? node.filter : '';
@@ -256,7 +256,7 @@ function register(context, ctl, tree, runner, view) {
     await ctl.run(() => edit.addFilter(e.data.file, parent ? `${parent}\\${name}` : name), 'New filter');
   });
 
-  reg('slnExplorer.renameFilter', async (node) => {
+  reg('fudebaSolutionist.renameFilter', async (node) => {
     const e = entryOf(node);
     if (!e || node.kind !== 'filter') return;
     const leaf = node.filter.split('\\').pop();
@@ -266,13 +266,13 @@ function register(context, ctl, tree, runner, view) {
     await ctl.run(() => edit.renameFilter(e.data.file, node.filter, parts.join('\\')), 'Rename filter');
   });
 
-  reg('slnExplorer.deleteFilter', async (node) => {
+  reg('fudebaSolutionist.deleteFilter', async (node) => {
     const e = entryOf(node);
     if (!e || node.kind !== 'filter') return;
     await ctl.run(() => edit.removeFilter(e.data.file, node.filter), 'Delete filter');
   });
 
-  reg('slnExplorer.addExistingFile', async (node) => {
+  reg('fudebaSolutionist.addExistingFile', async (node) => {
     const e = await pickProject(node, 'Add the file to which project?');
     if (!e) return;
     if (e.data.sdk) { warn('SDK-style projects include every file in their folder automatically.'); return; }
@@ -288,17 +288,17 @@ function register(context, ctl, tree, runner, view) {
     }, 'Add file');
   });
 
-  reg('slnExplorer.removeFromProject', async (node) => {
+  reg('fudebaSolutionist.removeFromProject', async (node) => {
     const e = entryOf(node);
     if (!e || !node.include) return;
     await ctl.run(() => edit.removeItem(e.data.file, node.include), 'Remove file');
   });
 
-  reg('slnExplorer.revealInOS', (node) => {
+  reg('fudebaSolutionist.revealInOS', (node) => {
     const f = node.file || (entryOf(node) && entryOf(node).data.file) || ctl.solutionFile;
     if (f) vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(f));
   });
-  reg('slnExplorer.copyPath', (node) => {
+  reg('fudebaSolutionist.copyPath', (node) => {
     const f = node.file || (entryOf(node) && entryOf(node).data.file) || ctl.solutionFile;
     if (f) vscode.env.clipboard.writeText(f);
   });
@@ -310,7 +310,7 @@ function register(context, ctl, tree, runner, view) {
     ...(cfg().get('templateFolders') || []),
   ].filter((p) => fs.existsSync(p));
 
-  reg('slnExplorer.importTemplate', async () => {
+  reg('fudebaSolutionist.importTemplate', async () => {
     const u = await vscode.window.showOpenDialog({ canSelectMany: true, filters: { 'Project templates': ['zip'] }, title: 'Import project template(s)' });
     if (!u) return;
     const dest = path.join(context.globalStorageUri.fsPath, 'templates');
@@ -327,12 +327,12 @@ function register(context, ctl, tree, runner, view) {
     if (n) vscode.window.showInformationMessage(`Imported ${n} template${n === 1 ? '' : 's'}.`);
   });
 
-  reg('slnExplorer.newProject', async () => {
+  reg('fudebaSolutionist.newProject', async () => {
     const templates = discoverTemplates(templateRoots());
     if (!templates.length) {
       const c = await vscode.window.showInformationMessage('No project templates found. Visual Studio keeps them in Documents\\Visual Studio <version>\\Templates\\ProjectTemplates. You can import template .zip files or add folders in the settings.', 'Import Template...', 'Open Settings');
-      if (c === 'Import Template...') vscode.commands.executeCommand('slnExplorer.importTemplate');
-      else if (c) vscode.commands.executeCommand('workbench.action.openSettings', 'slnExplorer.templateFolders');
+      if (c === 'Import Template...') vscode.commands.executeCommand('fudebaSolutionist.importTemplate');
+      else if (c) vscode.commands.executeCommand('workbench.action.openSettings', 'fudebaSolutionist.templateFolders');
       return;
     }
     const pick = await vscode.window.showQuickPick(
@@ -357,11 +357,11 @@ function register(context, ctl, tree, runner, view) {
       opt = { projectName, solutionFile: m.sol.file, location: m.sol.dir };
     } else {
       const wf = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0].uri.fsPath;
-      const last = context.globalState.get('slnExplorer.lastLocation');
+      const last = context.globalState.get('fudebaSolutionist.lastLocation');
       const loc = await vscode.window.showOpenDialog({ canSelectFiles: false, canSelectFolders: true, canSelectMany: false, defaultUri: vscode.Uri.file(last || wf || os.homedir()), openLabel: 'Select location', title: 'Where should the new solution be created?' });
       if (!loc) return;
       const location = loc[0].fsPath;
-      await context.globalState.update('slnExplorer.lastLocation', location);
+      await context.globalState.update('fudebaSolutionist.lastLocation', location);
       const solutionName = await vscode.window.showInputBox({ title: 'Solution name', value: projectName, validateInput: (v) => validateName(v) });
       if (!solutionName) return;
       let sameDirectory = false;

@@ -3,10 +3,10 @@ const fs = require('fs');
 const path = require('path');
 
 // Which icon a tree node shows. Resolution order, first hit wins:
-//   1. an explicit override for the key        (setting slnExplorer.icons)
-//   2. a file found by name in a folder         (slnExplorer.iconTheme = "folder", slnExplorer.iconFolder)
-//   3. the built-in Visual Studio-style set     (slnExplorer.iconTheme = "vs"; also the fallback of "folder")
-//   4. a VS Code codicon                         (slnExplorer.iconTheme = "codicons"; last resort)
+//   1. an explicit override for the key        (setting fudebaSolutionist.icons)
+//   2. a file found by name in a folder         (fudebaSolutionist.iconTheme = "folder", fudebaSolutionist.iconFolder)
+//   3. the built-in Visual Studio-style set     (fudebaSolutionist.iconTheme = "vs"; also the fallback of "folder")
+//   4. a VS Code codicon                         (fudebaSolutionist.iconTheme = "codicons"; last resort)
 // Everything here is pure file-system logic so it can be tested without VS Code.
 
 /** Keys of every icon the extension asks for. */

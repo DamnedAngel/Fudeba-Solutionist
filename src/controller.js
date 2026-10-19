@@ -5,9 +5,9 @@ const path = require('path');
 const { loadModel, projectsOf, configLabel } = require('./core/model');
 
 const WATCH_GLOB = '**/*.{sln,slnx,vcxproj,csproj,vbproj,fsproj,shproj,vcxitems,projitems,filters,props,targets}';
-const KEY_SOLUTION = 'slnExplorer.solutionFile';
-const KEY_CONFIG = 'slnExplorer.config';
-const KEY_STARTUP = 'slnExplorer.startup';
+const KEY_SOLUTION = 'fudebaSolutionist.solutionFile';
+const KEY_CONFIG = 'fudebaSolutionist.config';
+const KEY_STARTUP = 'fudebaSolutionist.startup';
 
 /** State of the open solution, shared by the tree, the commands and the status bar. */
 class Controller {
@@ -20,15 +20,15 @@ class Controller {
     this._changed = new vscode.EventEmitter();
     this.onChanged = this._changed.event;
 
-    this.status = vscode.window.createStatusBarItem('slnExplorer.config', vscode.StatusBarAlignment.Left, 90);
+    this.status = vscode.window.createStatusBarItem('fudebaSolutionist.config', vscode.StatusBarAlignment.Left, 90);
     this.status.name = 'Solution Explorer configuration';
-    this.status.command = 'slnExplorer.selectConfiguration';
+    this.status.command = 'fudebaSolutionist.selectConfiguration';
     context.subscriptions.push(this.status, this._changed);
 
     const w = vscode.workspace.createFileSystemWatcher(WATCH_GLOB);
     const poke = (uri) => { if (!this._selfWrite && !/[\\/](node_modules|\.git)[\\/]/.test(uri.fsPath)) this.scheduleReload(); };
     context.subscriptions.push(w, w.onDidChange(poke), w.onDidCreate(poke), w.onDidDelete(poke));
-    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration((e) => { if (e.affectsConfiguration('slnExplorer.solution')) this.openConfigured(); }));
+    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration((e) => { if (e.affectsConfiguration('fudebaSolutionist.solution')) this.openConfigured(); }));
   }
 
   get startupId() { return this.context.workspaceState.get(KEY_STARTUP) || null; }
@@ -42,7 +42,7 @@ class Controller {
   }
 
   async openConfigured() {
-    const cfg = vscode.workspace.getConfiguration('slnExplorer').get('solution');
+    const cfg = vscode.workspace.getConfiguration('fudebaSolutionist').get('solution');
     let file = null;
     if (cfg) {
       const root = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0].uri.fsPath;
@@ -85,7 +85,7 @@ class Controller {
         vscode.window.showErrorMessage(`Solution Explorer: ${e.message}`);
       }
     }
-    vscode.commands.executeCommand('setContext', 'slnExplorer.hasSolution', !!this.model);
+    vscode.commands.executeCommand('setContext', 'fudebaSolutionist.hasSolution', !!this.model);
     this.updateStatus();
     this._changed.fire();
   }

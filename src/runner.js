@@ -33,7 +33,7 @@ class Runner {
     if (this._running) { vscode.window.showWarningMessage('A build is already running.'); return false; }
     const ctl = this.ctl;
     if (!ctl.model) return false;
-    const cfg = vscode.workspace.getConfiguration('slnExplorer');
+    const cfg = vscode.workspace.getConfiguration('fudebaSolutionist');
     let steps;
     try {
       steps = plan(ctl.model, req, { msbuild: cfg.get('msbuildPath') || 'msbuild' });
@@ -45,7 +45,7 @@ class Runner {
 
     this._running = true;
     this.cancelled = false;
-    await vscode.commands.executeCommand('setContext', 'slnExplorer.building', true);
+    await vscode.commands.executeCommand('setContext', 'fudebaSolutionist.building', true);
     await vscode.workspace.saveAll(false);
 
     const model = ctl.model;
@@ -84,7 +84,7 @@ class Runner {
       handleInput: (d) => { if (d === '\x03') this.cancel(); }, // Ctrl+C in the terminal
     };
     const task = new vscode.Task(
-      { type: 'slnExplorer', project: title, action: req.action }, vscode.TaskScope.Workspace, title, 'Solution Explorer',
+      { type: 'fudebaSolutionist', project: title, action: req.action }, vscode.TaskScope.Workspace, title, 'Solution Explorer',
       new vscode.CustomExecution(async () => pty), cfg.get('problemMatchers') || []);
     task.presentationOptions = { reveal: vscode.TaskRevealKind.Always, panel: vscode.TaskPanelKind.Shared, clear: true, showReuseMessage: false, echo: false, focus: false };
     task.group = vscode.TaskGroup.Build;
@@ -98,7 +98,7 @@ class Runner {
     } finally {
       this._running = false;
       this.proc = null;
-      await vscode.commands.executeCommand('setContext', 'slnExplorer.building', false);
+      await vscode.commands.executeCommand('setContext', 'fudebaSolutionist.building', false);
     }
     const ok = !!result && !result.failed && !result.canceled;
     const text = `${VERB[req.action]}: ${result.succeeded} succeeded, ${result.failed} failed${result.skipped ? `, ${result.skipped} skipped` : ''}${result.canceled ? ' (canceled)' : ''}`;

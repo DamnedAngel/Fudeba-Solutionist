@@ -18,7 +18,7 @@ async function activate(context) {
   const tree = new SolutionTree(ctl);
   const problems = new Problems(context);
   const runner = new Runner(ctl, problems);
-  const view = vscode.window.createTreeView('slnExplorer.tree', {
+  const view = vscode.window.createTreeView('fudebaSolutionist.tree', {
     treeDataProvider: tree, showCollapseAll: true, canSelectMany: true,
     dragAndDropController: tree,
   });
@@ -28,7 +28,7 @@ async function activate(context) {
   }));
   context.subscriptions.push(ctl.icons.onChanged(() => tree.refresh()), ctl.scm.onChanged(() => tree.refresh()));
   register(context, ctl, tree, runner, view);
-  await vscode.commands.executeCommand('setContext', 'slnExplorer.building', false);
+  await vscode.commands.executeCommand('setContext', 'fudebaSolutionist.building', false);
   await ctl.openConfigured();
   return { controller: ctl, tree, runner, problems, properties: PropertiesPanel, about: AboutPanel };
 }

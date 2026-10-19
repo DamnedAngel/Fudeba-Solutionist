@@ -28,7 +28,7 @@ class PropertiesPanel {
     this.name = e.sln.name;
     this.sent = []; // what was posted to the page (read by the tests)
     this.creating = new Set();
-    this.panel = vscode.window.createWebviewPanel('slnExplorer.projectSettings', `${this.name} - Settings`, vscode.ViewColumn.Active, {
+    this.panel = vscode.window.createWebviewPanel('fudebaSolutionist.projectSettings', `${this.name} - Settings`, vscode.ViewColumn.Active, {
       enableScripts: true, retainContextWhenHidden: true,
       localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, 'media', 'properties')],
     });
@@ -65,7 +65,7 @@ class PropertiesPanel {
   /** (re)reads the files and gives the page fresh models */
   reload() {
     // files the project lacks are shown too, filled from its template (installed in Visual Studio, else the copy shipped here)
-    const extra = vscode.workspace.getConfiguration('slnExplorer').get('templateFolders') || [];
+    const extra = vscode.workspace.getConfiguration('fudebaSolutionist').get('templateFolders') || [];
     const defaults = defaultsProvider({ type: this.type, templateRoots: [...defaultTemplateRoots(), ...extra], bundledDir: path.join(this.context.extensionUri.fsPath, 'media', 'msx-config-defaults') });
     this.cfg = loadProjectConfig(this.dir, this.type, defaults);
     this.state = { type: this.type, project: this.name, pages: this.cfg.pages.map((p) => p.model) };

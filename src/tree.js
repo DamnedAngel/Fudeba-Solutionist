@@ -7,7 +7,7 @@ const { commandFor } = require('./core/build');
 const { msxProjectType } = require('./core/msx');
 
 const ACTIONS = [['build', 'Build'], ['rebuild', 'Rebuild'], ['clean', 'Clean']];
-const MIME = 'application/vnd.code.tree.slnexplorer';
+const MIME = 'application/vnd.code.tree.fudebasolutionist';
 const SCM_TEXT = { in: 'Checked in (no changes)', mod: 'Changed (pending changes)', add: 'New (not yet in source control)' };
 
 const byLabel = (a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base', numeric: true });
@@ -82,7 +82,7 @@ class SolutionTree {
       description: `${m.sol.configs.length} available  ▾`,
       iconPath: new vscode.ThemeIcon('layers'),
       tooltip: 'Solution configuration: decides which project configuration every build action uses. Click to change.',
-      command: { command: 'slnExplorer.selectConfiguration', title: 'Select Solution Configuration' },
+      command: { command: 'fudebaSolutionist.selectConfiguration', title: 'Select Solution Configuration' },
     });
   }
 
@@ -176,7 +176,7 @@ class SolutionTree {
       description: c.command || `(${c.skip})`,
       tooltip: c.command || c.skip,
       iconPath: this.ctl.icons.get(`action.${action}`),
-      command: { command: 'slnExplorer.editAction', title: 'Edit', arguments: [node] },
+      command: { command: 'fudebaSolutionist.editAction', title: 'Edit', arguments: [node] },
     });
   }
 
@@ -192,7 +192,7 @@ class SolutionTree {
         return this.make(n, t.sln.name, vscode.TreeItemCollapsibleState.None, {
           iconPath: this.ctl.icons.get(this.projectIconKey(t.data)),
           description: s && s.ref && !s.sln ? 'ProjectReference' : undefined,
-          command: { command: 'slnExplorer.reveal', title: 'Reveal', arguments: [d] },
+          command: { command: 'fudebaSolutionist.reveal', title: 'Reveal', arguments: [d] },
         });
       });
     };
@@ -224,7 +224,7 @@ class SolutionTree {
     return this.make(node, path.basename(file), vscode.TreeItemCollapsibleState.None, {
       resourceUri: vscode.Uri.file(file),
       description: exists ? undefined : '(missing)',
-      // C/H/ASM/INC get our sheet icons; other files follow the user's file icon theme (see slnExplorer.fileIcons)
+      // C/H/ASM/INC get our sheet icons; other files follow the user's file icon theme (see fudebaSolutionist.fileIcons)
       iconPath: !exists ? this.ctl.icons.get('file.missing') : this.ctl.icons.fileIcon(file, scm),
       tooltip: scm ? `${file}\n${SCM_TEXT[scm]}` : file,
       command: exists ? { command: 'vscode.open', title: 'Open', arguments: [vscode.Uri.file(file)] } : undefined,

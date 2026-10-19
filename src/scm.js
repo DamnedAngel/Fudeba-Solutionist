@@ -17,11 +17,11 @@ class Scm {
     this.api = null;
     context.subscriptions.push(this._changed, { dispose: () => this.subs.forEach((d) => d.dispose()) });
     this.subs = [];
-    vscode.workspace.onDidChangeConfiguration((e) => { if (e.affectsConfiguration('slnExplorer.sourceControl')) this._changed.fire(); }, null, this.subs);
+    vscode.workspace.onDidChangeConfiguration((e) => { if (e.affectsConfiguration('fudebaSolutionist.sourceControl')) this._changed.fire(); }, null, this.subs);
     this.start().catch(() => { /* no git extension: the tree simply shows no status */ });
   }
 
-  get enabled() { return vscode.workspace.getConfiguration('slnExplorer').get('sourceControl.icons') !== false; }
+  get enabled() { return vscode.workspace.getConfiguration('fudebaSolutionist').get('sourceControl.icons') !== false; }
 
   async start() {
     const ext = vscode.extensions.getExtension('vscode.git');

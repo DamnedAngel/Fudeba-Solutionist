@@ -44,7 +44,7 @@ suite('Solution Explorer', function () {
     const top = (await kids())[0];
     assert.strictEqual(top.kind, 'config', 'the configuration row comes first');
     assert.match(label(top), /^Configuration: Debug$/, 'only Debug, no platform, when the solution has one platform');
-    assert.strictEqual(top.item.command.command, 'slnExplorer.selectConfiguration');
+    assert.strictEqual(top.item.command.command, 'fudebaSolutionist.selectConfiguration');
     const root = (await solutionRoot());
     assert.strictEqual(root.kind, 'solution');
     assert.match(label(root), /My Game with Overlays/);
@@ -75,7 +75,7 @@ suite('Solution Explorer', function () {
       for (const a of ['build', 'clean']) {
         const game = await projectNode('Game');
         const node = (await kids((await kids(game))[0])).find((n) => n.action === a);
-        await vscode.commands.executeCommand('slnExplorer.editAction', node);
+        await vscode.commands.executeCommand('fudebaSolutionist.editAction', node);
       }
     } finally { restore(); }
     const after = fs.readFileSync(path.join(WS, 'Game', 'Game.vcxproj'), 'utf8');
@@ -102,7 +102,7 @@ suite('Solution Explorer', function () {
         return items;
       },
     });
-    try { await vscode.commands.executeCommand('slnExplorer.editDependencies', ovl); } finally { restore(); }
+    try { await vscode.commands.executeCommand('fudebaSolutionist.editDependencies', ovl); } finally { restore(); }
     await until(() => api.controller.model.entries.get([...api.controller.model.entries.keys()].find((k) => api.controller.model.entries.get(k).sln.name === 'Overlay1')).deps.length === 1, 5000, 'dependency saved');
     const o2 = await projectNode('Overlay1');
     const deps = (await kids(o2)).find((n) => n.kind === 'deps');
@@ -116,7 +116,7 @@ suite('Solution Explorer', function () {
     const g = await projectNode('Game');
     let warned = '', picked = false;
     const restore2 = answer({ showQuickPick: async () => { picked = true; return undefined; }, showWarningMessage: async (m) => { warned = m; } });
-    try { await vscode.commands.executeCommand('slnExplorer.editDependencies', g); } finally { restore2(); }
+    try { await vscode.commands.executeCommand('fudebaSolutionist.editDependencies', g); } finally { restore2(); }
     assert.ok(!picked);
     assert.match(warned, /no other projects/);
   });
@@ -128,7 +128,7 @@ suite('Solution Explorer', function () {
     try {
       const ovl = await projectNode('Overlay1');
       const node = (await kids((await kids(ovl))[0])).find((n) => n.action === 'build');
-      await vscode.commands.executeCommand('slnExplorer.editAction', node);
+      await vscode.commands.executeCommand('fudebaSolutionist.editAction', node);
     } finally { restore(); }
     fs.rmSync(log, { force: true });
     const ok = await api.runner.run({ ids: [[...api.controller.model.entries.values()].find((e) => e.sln.name === 'Overlay1').sln.id], action: 'build' });
@@ -146,7 +146,7 @@ suite('Solution Explorer', function () {
     try {
       const game = await projectNode('Game');
       const node = (await kids((await kids(game))[0])).find((n) => n.action === 'build');
-      await vscode.commands.executeCommand('slnExplorer.editAction', node);
+      await vscode.commands.executeCommand('fudebaSolutionist.editAction', node);
     } finally { restore(); }
     const restore2 = answer({ showErrorMessage: async () => undefined });
     let ok;
@@ -162,7 +162,7 @@ suite('Solution Explorer', function () {
     try {
       const game = await projectNode('Game');
       const node = (await kids((await kids(game))[0])).find((n) => n.action === 'build');
-      await vscode.commands.executeCommand('slnExplorer.editAction', node);
+      await vscode.commands.executeCommand('fudebaSolutionist.editAction', node);
     } finally { restore(); }
     const gameId = [...api.controller.model.entries.values()].find((e) => e.sln.name === 'Game').sln.id;
     const ok = await api.runner.run({ ids: [gameId], action: 'build', withDeps: false });
@@ -202,7 +202,7 @@ suite('Solution Explorer', function () {
     try {
       const game = await projectNode('Game');
       const node = (await kids((await kids(game))[0])).find((n) => n.action === 'build');
-      await vscode.commands.executeCommand('slnExplorer.editAction', node);
+      await vscode.commands.executeCommand('fudebaSolutionist.editAction', node);
     } finally { restore2(); }
     await api.runner.run({ ids: [gameId], action: 'build', withDeps: false });
     assert.strictEqual(vscode.languages.getDiagnostics(vscode.Uri.file(path.join(dir, 'mdo.c'))).length, 0);
@@ -211,7 +211,7 @@ suite('Solution Explorer', function () {
   test('filters: create, then move a file by drag and drop, then rename and delete', async () => {
     const game = await projectNode('Game');
     let restore = answer({ showInputBox: async () => 'Sounds' });
-    try { await vscode.commands.executeCommand('slnExplorer.newFilter', game); } finally { restore(); }
+    try { await vscode.commands.executeCommand('fudebaSolutionist.newFilter', game); } finally { restore(); }
     await until(async () => (await kids(await projectNode('Game'))).some((n) => label(n) === 'Sounds'), 5000, 'new filter');
 
     const g2 = await projectNode('Game');
@@ -225,7 +225,7 @@ suite('Solution Explorer', function () {
     assert.match(fs.readFileSync(path.join(WS, 'Game', 'Game.vcxproj.filters'), 'utf8'), /<ClCompile Include="mdo\.c">\s*<Filter>Sounds<\/Filter>/);
 
     restore = answer({ showInputBox: async () => 'Audio' });
-    try { await vscode.commands.executeCommand('slnExplorer.renameFilter', (await kids(await projectNode('Game'))).find((n) => label(n) === 'Sounds')); } finally { restore(); }
+    try { await vscode.commands.executeCommand('fudebaSolutionist.renameFilter', (await kids(await projectNode('Game'))).find((n) => label(n) === 'Sounds')); } finally { restore(); }
     await until(async () => (await kids(await projectNode('Game'))).some((n) => label(n) === 'Audio'), 5000, 'renamed filter');
 
     // put it back, then the empty filter can go
@@ -236,7 +236,7 @@ suite('Solution Explorer', function () {
     api.tree.handleDrag([mdo], dt2);
     await api.tree.handleDrop((await kids(g3)).find((n) => label(n) === 'C Source Files'), dt2);
     await until(async () => !(await kids((await kids(await projectNode('Game'))).find((n) => label(n) === 'Audio'))).length, 5000, 'empty filter');
-    await vscode.commands.executeCommand('slnExplorer.deleteFilter', (await kids(await projectNode('Game'))).find((n) => label(n) === 'Audio'));
+    await vscode.commands.executeCommand('fudebaSolutionist.deleteFilter', (await kids(await projectNode('Game'))).find((n) => label(n) === 'Audio'));
     await until(async () => !(await kids(await projectNode('Game'))).some((n) => label(n) === 'Audio'), 5000, 'filter deleted');
   });
 
@@ -248,7 +248,7 @@ suite('Solution Explorer', function () {
     await api.controller.setStartup(g.projectId);
     const restore = answer({ showWarningMessage: async () => 'Remove' });
     try {
-      await vscode.commands.executeCommand('slnExplorer.removeProject', g);
+      await vscode.commands.executeCommand('fudebaSolutionist.removeProject', g);
       await until(async () => !(await kids(await solutionRoot())).some((n) => label(n) === 'Game'), 5000, 'project removed from the tree');
       assert.ok(!fs.readFileSync(file, 'utf8').toUpperCase().includes(guid.toUpperCase()), 'no trace of the project in the solution');
       assert.ok(fs.existsSync(path.join(WS, 'Game', 'Game.vcxproj')), 'the project files are not deleted');
@@ -285,7 +285,7 @@ suite('Solution Explorer', function () {
   });
 
   test('icons switch while running: built-in set, codicons, an icon folder, and single overrides', async () => {
-    const cfg = vscode.workspace.getConfiguration('slnExplorer');
+    const cfg = vscode.workspace.getConfiguration('fudebaSolutionist');
     const W = vscode.ConfigurationTarget.Workspace;
     const iconOf = async () => (await projectNode('Game')).item.iconPath;
     const waitIcon = async (pred, what) => until(async () => { const i = await iconOf(); return pred(i) ? i : null; }, 8000, what);
@@ -334,7 +334,7 @@ suite('Solution Explorer', function () {
 
   test('configuration switch changes what every project builds', async () => {
     const restore = answer({ showQuickPick: async (items) => items.find((i) => i.label === 'Release') });
-    try { await vscode.commands.executeCommand('slnExplorer.selectConfiguration'); } finally { restore(); }
+    try { await vscode.commands.executeCommand('fudebaSolutionist.selectConfiguration'); } finally { restore(); }
     await until(() => api.controller.model.config === 'Release|x86', 5000, 'config');
     assert.strictEqual([...api.controller.model.entries.values()][0].projectConfig, 'Release|Win32');
     await api.controller.setConfig('Debug|x86');
@@ -345,13 +345,13 @@ suite('Solution Explorer', function () {
     const roots = process.env.SLNX_TEMPLATE_ROOTS ? process.env.SLNX_TEMPLATE_ROOTS.split(path.delimiter) : defaultTemplateRoots();
     const ts = discoverTemplates(roots).filter((t) => /^MSX/.test(t.name));
     if (!ts.length) return this.skip();
-    await vscode.workspace.getConfiguration('slnExplorer').update('templateFolders', roots, vscode.ConfigurationTarget.Workspace);
+    await vscode.workspace.getConfiguration('fudebaSolutionist').update('templateFolders', roots, vscode.ConfigurationTarget.Workspace);
     let seenTemplates;
     const restore = answer({
       showQuickPick: async (items) => { seenTemplates = items.map((i) => i.label); return items.find((i) => i.label === 'MSX-DOS Overlay'); },
       showInputBox: async (o) => (/^New /.test(o.title) ? 'Overlay2' : undefined),
     });
-    try { await vscode.commands.executeCommand('slnExplorer.newProject'); } finally { restore(); }
+    try { await vscode.commands.executeCommand('fudebaSolutionist.newProject'); } finally { restore(); }
     assert.ok(seenTemplates.includes('MSX ROM Application') && seenTemplates.includes('MSX-DOS Overlay'), seenTemplates.join());
     await until(() => [...api.controller.model.entries.values()].some((e) => e.sln.name === 'Overlay2'), 10000, 'new project in solution');
     assert.ok(fs.existsSync(path.join(WS, 'Overlay2', 'Overlay2.vcxproj')));
@@ -364,7 +364,7 @@ suite('Solution Explorer', function () {
   });
 
   test('About box: version, the Claude credit, notices and diagnostics', async function () {
-    await vscode.commands.executeCommand('slnExplorer.about');
+    await vscode.commands.executeCommand('fudebaSolutionist.about');
     const about = api.about.current;
     assert.ok(about, 'the About panel is open');
     const html = about.panel.webview.html;
@@ -382,7 +382,7 @@ suite('Solution Explorer', function () {
     await about.onMessage({ type: 'copy' });
     assert.strictEqual(await vscode.env.clipboard.readText(), d, 'Copy diagnostics puts the text on the clipboard');
     // opening it again reuses the panel
-    await vscode.commands.executeCommand('slnExplorer.about');
+    await vscode.commands.executeCommand('fudebaSolutionist.about');
     assert.strictEqual(api.about.current, about);
     about.panel.dispose();
   });
@@ -401,7 +401,7 @@ suite('Solution Explorer', function () {
       const other = (await kids(await solutionRoot())).find((n) => label(n) === 'Overlay1');
       assert.ok(other && !/\.msx$/.test(other.item.contextValue), 'a non-MSX project has no settings button');
 
-      await vscode.commands.executeCommand('slnExplorer.projectProperties', game);
+      await vscode.commands.executeCommand('fudebaSolutionist.projectProperties', game);
       const panel = api.properties.panels.get(game.projectId);
       assert.ok(panel, 'the dialog is open');
       assert.strictEqual(panel.type, 'ROM');
@@ -439,7 +439,7 @@ suite('Solution Explorer', function () {
       edit.removeItem(vcx, 'Config\\Symbols.txt');
       await until(() => !api.properties.panels.has(game.projectId), 5000, 'dialog closed');
       api.controller.reload();
-      await vscode.commands.executeCommand('slnExplorer.projectProperties', await projectNode('Game'));
+      await vscode.commands.executeCommand('fudebaSolutionist.projectProperties', await projectNode('Game'));
       const p2 = api.properties.panels.get(game.projectId);
       await p2.onMessage({ type: 'ready' });
       const init2 = p2.sent.filter((m) => m.type === 'init').pop();
@@ -492,10 +492,10 @@ suite('Solution Explorer', function () {
       await repo.status();
       await until(async () => { api.tree.refresh(); return /file\.c\+in\.svg$/.test((await iconOf()).icon); }, 20000, 'checked in again');
       // switched off by the setting: our plain icons again
-      await vscode.workspace.getConfiguration('slnExplorer').update('sourceControl.icons', false, vscode.ConfigurationTarget.Workspace);
+      await vscode.workspace.getConfiguration('fudebaSolutionist').update('sourceControl.icons', false, vscode.ConfigurationTarget.Workspace);
       await until(async () => /file\.c\.svg$/.test((await iconOf()).icon), 10000, 'marks switched off');
     } finally {
-      await vscode.workspace.getConfiguration('slnExplorer').update('sourceControl.icons', undefined, vscode.ConfigurationTarget.Workspace);
+      await vscode.workspace.getConfiguration('fudebaSolutionist').update('sourceControl.icons', undefined, vscode.ConfigurationTarget.Workspace);
       // the git extension may still hold files open on Windows; this is the last test and the folder is a temp copy
       try { fs.rmSync(path.join(WS, '.git'), { recursive: true, force: true, maxRetries: 5, retryDelay: 300 }); } catch { /* left for the OS temp cleaner */ }
     }

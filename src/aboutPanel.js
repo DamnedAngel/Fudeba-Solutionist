@@ -11,7 +11,7 @@ class AboutPanel {
     this.ctl = ctl;
     const pkg = context.extension.packageJSON;
     this.pkg = pkg;
-    this.panel = vscode.window.createWebviewPanel('slnExplorer.about', `About ${pkg.displayName}`, vscode.ViewColumn.Active, {
+    this.panel = vscode.window.createWebviewPanel('fudebaSolutionist.about', `About ${pkg.displayName}`, vscode.ViewColumn.Active, {
       enableScripts: true,
       localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, 'media')],
     });
@@ -35,10 +35,10 @@ class AboutPanel {
   /** plain text for a bug report */
   diagnostics() {
     const m = this.ctl.model;
-    const cfg = vscode.workspace.getConfiguration('slnExplorer');
+    const cfg = vscode.workspace.getConfiguration('fudebaSolutionist');
     const changed = {};
     for (const k of Object.keys(this.pkg.contributes.configuration.properties || {})) {
-      const key = k.replace(/^slnExplorer\./, '');
+      const key = k.replace(/^fudebaSolutionist\./, '');
       const insp = cfg.inspect(key);
       const v = insp && (insp.workspaceFolderValue !== undefined ? insp.workspaceFolderValue : insp.workspaceValue !== undefined ? insp.workspaceValue : insp.globalValue);
       if (v !== undefined) changed[key] = v;

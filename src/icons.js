@@ -25,17 +25,17 @@ class Icons {
     this.reload();
     context.subscriptions.push(this._changed,
       vscode.workspace.onDidChangeConfiguration((e) => {
-        if (e.affectsConfiguration('slnExplorer.iconTheme') || e.affectsConfiguration('slnExplorer.iconFolder') ||
-          e.affectsConfiguration('slnExplorer.icons') || e.affectsConfiguration('slnExplorer.fileIcons')) this.reload();
+        if (e.affectsConfiguration('fudebaSolutionist.iconTheme') || e.affectsConfiguration('fudebaSolutionist.iconFolder') ||
+          e.affectsConfiguration('fudebaSolutionist.icons') || e.affectsConfiguration('fudebaSolutionist.fileIcons')) this.reload();
       }),
       { dispose: () => this.watcher && this.watcher.dispose() },
-      vscode.commands.registerCommand('slnExplorer.chooseIconTheme', () => this.chooseTheme()),
-      vscode.commands.registerCommand('slnExplorer.setIcon', (node) => this.setIcon(node)),
-      vscode.commands.registerCommand('slnExplorer.reloadIcons', () => this.reload()),
+      vscode.commands.registerCommand('fudebaSolutionist.chooseIconTheme', () => this.chooseTheme()),
+      vscode.commands.registerCommand('fudebaSolutionist.setIcon', (node) => this.setIcon(node)),
+      vscode.commands.registerCommand('fudebaSolutionist.reloadIcons', () => this.reload()),
     );
   }
 
-  cfg() { return vscode.workspace.getConfiguration('slnExplorer'); }
+  cfg() { return vscode.workspace.getConfiguration('fudebaSolutionist'); }
 
   /** Re-reads settings and (when a folder is in use) re-indexes it; then tells the tree. */
   reload() {
@@ -122,7 +122,7 @@ class Icons {
   /** After picking a folder: which of our icons were found in it. */
   report() {
     const found = KEYS.filter((k) => this.describe(k).source === 'folder');
-    vscode.window.showInformationMessage(`${found.length} of ${KEYS.length} icons found in the folder; the rest use the built-in set. Assign the others with "Set Icon..." or the slnExplorer.icons setting.`);
+    vscode.window.showInformationMessage(`${found.length} of ${KEYS.length} icons found in the folder; the rest use the built-in set. Assign the others with "Set Icon..." or the fudebaSolutionist.icons setting.`);
   }
 
   /** Per-icon customisation: pick which icon (the clicked node's by default) and what it should show. */
