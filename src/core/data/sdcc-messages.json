@@ -1,0 +1,1467 @@
+{
+ "0": {
+  "name": "E_DUPLICATE",
+  "level": "error",
+  "text": "Duplicate symbol '%s', symbol IGNORED"
+ },
+ "1": {
+  "name": "E_SYNTAX_ERROR",
+  "level": "error",
+  "text": "Syntax error, declaration ignored at '%s'"
+ },
+ "2": {
+  "name": "E_CONST_EXPECTED",
+  "level": "error",
+  "text": "Initializer element is not a constant expression"
+ },
+ "3": {
+  "name": "E_OUT_OF_MEM",
+  "level": "error",
+  "text": "'malloc' failed file '%s' for size %ld"
+ },
+ "4": {
+  "name": "E_FILE_OPEN_ERR",
+  "level": "error",
+  "text": "'fopen' failed on file '%s'"
+ },
+ "5": {
+  "name": "E_INVALID_OCLASS",
+  "level": "error",
+  "text": "Internal Error Oclass invalid '%s'"
+ },
+ "6": {
+  "name": "E_CANNOT_ALLOC",
+  "level": "error",
+  "text": "Cannot allocate variable '%s'."
+ },
+ "7": {
+  "name": "E_OLD_STYLE",
+  "level": "error",
+  "text": "Old style C declaration. IGNORED '%s'"
+ },
+ "8": {
+  "name": "E_STACK_OUT",
+  "level": "error",
+  "text": "Out of stack Space. '%s' not allocated"
+ },
+ "9": {
+  "name": "E_INTERNAL_ERROR",
+  "level": "error",
+  "text": "FATAL Compiler Internal Error in file '%s' line number '%d' : %s  Contact Author with source code"
+ },
+ "10": {
+  "name": "E_LVALUE_REQUIRED",
+  "level": "error",
+  "text": "'lvalue' required for '%s' operation."
+ },
+ "11": {
+  "name": "E_TMPFILE_FAILED",
+  "level": "error",
+  "text": "Creation of temp file failed"
+ },
+ "12": {
+  "name": "E_FUNCTION_EXPECTED",
+  "level": "error",
+  "text": "called object is not a function"
+ },
+ "13": {
+  "name": "E_USING_ERROR",
+  "level": "error",
+  "text": "'using', 'interrupt' or 'reentrant' must follow a function definition.'%s'"
+ },
+ "14": {
+  "name": "E_SFR_INIT",
+  "level": "error",
+  "text": "Absolute address & initial value both cannot be specified for  a 'sfr','sbit' storage class, initial value ignored '%s'"
+ },
+ "15": {
+  "name": "W_INIT_IGNORED",
+  "level": "warning",
+  "text": "Variable in the storage class cannot be initialized.'%s'"
+ },
+ "16": {
+  "name": "E_AUTO_ASSUMED",
+  "level": "error",
+  "text": "variable '%s' must be static to have storage class in reentrant function"
+ },
+ "17": {
+  "name": "E_AUTO_ABSA",
+  "level": "error",
+  "text": "absolute address not allowed for automatic var '%s' in reentrant function"
+ },
+ "18": {
+  "name": "W_INIT_WRONG",
+  "level": "warning",
+  "text": "Initializer different levels of indirections"
+ },
+ "19": {
+  "name": "E_FUNC_REDEF",
+  "level": "error",
+  "text": "Function name '%s' redefined"
+ },
+ "20": {
+  "name": "E_ID_UNDEF",
+  "level": "error",
+  "text": "Undefined identifier '%s'"
+ },
+ "21": {
+  "name": "W_STACK_OVERFLOW",
+  "level": "warning",
+  "text": "stack exceeds 256 bytes for function '%s'"
+ },
+ "22": {
+  "name": "E_NEED_ARRAY_PTR",
+  "level": "error",
+  "text": "Array or pointer required for '%s' operation"
+ },
+ "23": {
+  "name": "E_IDX_NOT_INT",
+  "level": "error",
+  "text": "Array index not an integer"
+ },
+ "24": {
+  "name": "W_IDX_OUT_OF_BOUNDS",
+  "level": "warning",
+  "text": "index %i is outside of the array bounds (array size is %i)"
+ },
+ "25": {
+  "name": "E_STRUCT_UNION",
+  "level": "error",
+  "text": "Structure/Union expected left of '.%s'"
+ },
+ "26": {
+  "name": "E_NOT_MEMBER",
+  "level": "error",
+  "text": "'%s' not a structure/union member"
+ },
+ "27": {
+  "name": "E_PTR_REQD",
+  "level": "error",
+  "text": "Pointer required"
+ },
+ "28": {
+  "name": "E_UNARY_OP",
+  "level": "error",
+  "text": "'unary %c': illegal operand"
+ },
+ "29": {
+  "name": "E_CONV_ERR",
+  "level": "error",
+  "text": "conversion error: integral promotion failed"
+ },
+ "30": {
+  "name": "E_BITFLD_TYPE",
+  "level": "error",
+  "text": "invalid type for bit-field"
+ },
+ "31": {
+  "name": "E_BITFLD_SIZE",
+  "level": "error",
+  "text": "bit-field size too wide for type (max %d bits)"
+ },
+ "32": {
+  "name": "W_TRUNCATION",
+  "level": "warning",
+  "text": "high order truncation might occur"
+ },
+ "33": {
+  "name": "E_CODE_WRITE",
+  "level": "error",
+  "text": "Attempt to assign value to a constant variable (%s)"
+ },
+ "34": {
+  "name": "E_LVALUE_CONST",
+  "level": "error",
+  "text": "Lvalue specifies constant object"
+ },
+ "35": {
+  "name": "E_ILLEGAL_ADDR",
+  "level": "error",
+  "text": "'&' illegal operand, %s"
+ },
+ "36": {
+  "name": "E_CAST_ILLEGAL",
+  "level": "error",
+  "text": "illegal cast (cast cannot be aggregate)"
+ },
+ "37": {
+  "name": "E_MULT_INTEGRAL",
+  "level": "error",
+  "text": "'*' bad operand"
+ },
+ "38": {
+  "name": "E_ARG_ERROR",
+  "level": "error",
+  "text": "Argument count error, argument ignored"
+ },
+ "39": {
+  "name": "E_ARG_COUNT",
+  "level": "error",
+  "text": "Function was expecting more arguments"
+ },
+ "40": {
+  "name": "E_FUNC_EXPECTED",
+  "level": "error",
+  "text": "Function name expected '%s'. ANSI style declaration REQUIRED"
+ },
+ "41": {
+  "name": "E_PLUS_INVALID",
+  "level": "error",
+  "text": "invalid operand '%s'"
+ },
+ "42": {
+  "name": "E_PTR_PLUS_PTR",
+  "level": "error",
+  "text": "pointer + pointer invalid"
+ },
+ "43": {
+  "name": "E_SHIFT_OP_INVALID",
+  "level": "error",
+  "text": "invalid operand for shift operator"
+ },
+ "44": {
+  "name": "E_COMPARE_OP",
+  "level": "error",
+  "text": "operands are not comparable"
+ },
+ "45": {
+  "name": "E_BITWISE_OP",
+  "level": "error",
+  "text": "operand invalid for bitwise operation"
+ },
+ "46": {
+  "name": "E_ANDOR_OP",
+  "level": "error",
+  "text": "Invalid operand for '&&' or '||'"
+ },
+ "47": {
+  "name": "E_TYPE_MISMATCH",
+  "level": "error",
+  "text": "indirections to different types %s %s"
+ },
+ "48": {
+  "name": "E_ARRAY_ASSIGN",
+  "level": "error",
+  "text": "cannot assign values to arrays"
+ },
+ "49": {
+  "name": "E_ARRAY_DIRECT",
+  "level": "error",
+  "text": "bit Arrays can be accessed by literal index only"
+ },
+ "50": {
+  "name": "E_BIT_ARRAY",
+  "level": "error",
+  "text": "Array or Pointer to bit|sbit|sfr not allowed.'%s'"
+ },
+ "51": {
+  "name": "E_DUPLICATE_TYPEDEF",
+  "level": "error",
+  "text": "typedef/enum '%s' duplicate. Previous definition Ignored"
+ },
+ "52": {
+  "name": "E_ARG_TYPE",
+  "level": "error",
+  "text": "Actual Argument type different from declaration %d"
+ },
+ "53": {
+  "name": "E_RET_VALUE",
+  "level": "error",
+  "text": "Function return value mismatch"
+ },
+ "54": {
+  "name": "E_FUNC_AGGR",
+  "level": "error",
+  "text": "Function cannot return aggregate. Func body ignored"
+ },
+ "55": {
+  "name": "E_FUNC_DEF",
+  "level": "error",
+  "text": "ANSI Style declaration needed"
+ },
+ "56": {
+  "name": "E_DUPLICATE_LABEL",
+  "level": "error",
+  "text": "Duplicate label '%s'"
+ },
+ "57": {
+  "name": "E_LABEL_UNDEF",
+  "level": "error",
+  "text": "Label undefined '%s'"
+ },
+ "58": {
+  "name": "E_FUNC_VOID",
+  "level": "error",
+  "text": "void function returning value"
+ },
+ "59": {
+  "name": "W_VOID_FUNC",
+  "level": "warning",
+  "text": "function '%s' must return value"
+ },
+ "60": {
+  "name": "W_RETURN_MISMATCH",
+  "level": "warning",
+  "text": "function return value mismatch"
+ },
+ "61": {
+  "name": "E_CASE_CONTEXT",
+  "level": "error",
+  "text": "'case/default' found without 'switch'. Statement ignored"
+ },
+ "62": {
+  "name": "E_CASE_CONSTANT",
+  "level": "error",
+  "text": "'case' expression not constant. Statement ignored"
+ },
+ "63": {
+  "name": "E_BREAK_CONTEXT",
+  "level": "error",
+  "text": "'break/continue' statement out of context"
+ },
+ "64": {
+  "name": "E_SWITCH_AGGR",
+  "level": "error",
+  "text": "nonintegral used in switch expression"
+ },
+ "65": {
+  "name": "E_FUNC_BODY",
+  "level": "error",
+  "text": "function '%s' already has body"
+ },
+ "66": {
+  "name": "E_UNKNOWN_SIZE",
+  "level": "error",
+  "text": "attempt to allocate variable of unknown size '%s'"
+ },
+ "67": {
+  "name": "E_AUTO_AGGR_INIT",
+  "level": "error",
+  "text": "aggregate 'auto' variable '%s' cannot be initialized"
+ },
+ "68": {
+  "name": "E_INIT_COUNT",
+  "level": "error",
+  "text": "too many initializers"
+ },
+ "69": {
+  "name": "E_INIT_STRUCT",
+  "level": "error",
+  "text": "struct/union/array '%s': initialization needs curly braces"
+ },
+ "70": {
+  "name": "E_INIT_NON_ADDR",
+  "level": "error",
+  "text": "non-address initialization expression"
+ },
+ "71": {
+  "name": "E_INT_DEFINED",
+  "level": "error",
+  "text": "interrupt no '%d' already has a service routine '%s'"
+ },
+ "72": {
+  "name": "E_INT_ARGS",
+  "level": "error",
+  "text": "interrupt routine cannot have arguments, arguments ignored"
+ },
+ "73": {
+  "name": "E_INCLUDE_MISSING",
+  "level": "error",
+  "text": "critical compiler #include file missing."
+ },
+ "74": {
+  "name": "E_NO_MAIN",
+  "level": "error",
+  "text": "function 'main' undefined"
+ },
+ "75": {
+  "name": "E_UNUSED_75",
+  "level": "error",
+  "text": "this errorcode is no longer used"
+ },
+ "76": {
+  "name": "E_PRE_PROC_FAILED",
+  "level": "error",
+  "text": "Pre-Processor %s"
+ },
+ "77": {
+  "name": "E_DUP_FAILED",
+  "level": "error",
+  "text": "_dup call failed"
+ },
+ "78": {
+  "name": "E_INCOMPAT_TYPES",
+  "level": "error",
+  "text": "incompatible types"
+ },
+ "79": {
+  "name": "W_LOOP_ELIMINATE",
+  "level": "warning",
+  "text": "'while' loop with 'zero' constant. Loop eliminated"
+ },
+ "80": {
+  "name": "W_NO_SIDE_EFFECTS",
+  "level": "warning",
+  "text": "%s expression has NO side effects. Expr eliminated"
+ },
+ "81": {
+  "name": "W_CONST_TOO_LARGE",
+  "level": "pedantic",
+  "text": "constant value '%ld', out of range."
+ },
+ "82": {
+  "name": "W_BAD_COMPARE",
+  "level": "warning",
+  "text": "comparison will either, ALWAYs succeed or ALWAYs fail"
+ },
+ "83": {
+  "name": "E_TERMINATING",
+  "level": "error",
+  "text": "Compiler Terminating , contact author with source"
+ },
+ "84": {
+  "name": "W_LOCAL_NOINIT",
+  "level": "warning",
+  "text": "'auto' variable '%s' may be used before initialization"
+ },
+ "85": {
+  "name": "W_NO_REFERENCE",
+  "level": "warning",
+  "text": "in function %s unreferenced %s : '%s'"
+ },
+ "86": {
+  "name": "E_OP_UNKNOWN_SIZE",
+  "level": "error",
+  "text": "unknown size for operand"
+ },
+ "87": {
+  "name": "W_LONG_UNSUPPORTED",
+  "level": "warning",
+  "text": "'%s' 'long' not supported , declared as 'int'."
+ },
+ "88": {
+  "name": "W_LITERAL_GENERIC",
+  "level": "warning",
+  "text": "cast of LITERAL value to 'generic' pointer"
+ },
+ "89": {
+  "name": "E_SFR_ADDR_RANGE",
+  "level": "error",
+  "text": "%s '%s' address out of range"
+ },
+ "90": {
+  "name": "E_BITVAR_STORAGE",
+  "level": "error",
+  "text": "storage class CANNOT be specified for bit variable '%s'"
+ },
+ "91": {
+  "name": "E_EXTERN_MISMATCH",
+  "level": "error",
+  "text": "extern definition for '%s' mismatches with declaration."
+ },
+ "92": {
+  "name": "E_NONRENT_ARGS",
+  "level": "error",
+  "text": "Functions called via pointers must be 'reentrant' to take this many (bytes for) arguments"
+ },
+ "93": {
+  "name": "W_DOUBLE_UNSUPPORTED",
+  "level": "warning",
+  "text": "types 'double', 'long double' not supported. Assuming 'float'"
+ },
+ "94": {
+  "name": "W_COMP_RANGE",
+  "level": "pedantic",
+  "text": "comparison is always %s due to limited range of data type"
+ },
+ "95": {
+  "name": "W_FUNC_NO_RETURN",
+  "level": "warning",
+  "text": "no 'return' statement found for function '%s'"
+ },
+ "96": {
+  "name": "W_PRE_PROC_WARNING",
+  "level": "warning",
+  "text": "Pre-Processor %s"
+ },
+ "97": {
+  "name": "E_STRUCT_AS_ARG",
+  "level": "error",
+  "text": "SDCC cannot pass structure '%s' as function argument"
+ },
+ "98": {
+  "name": "E_PREV_DECL_CONFLICT",
+  "level": "error",
+  "text": "conflict with previous declaration of '%s' for attribute '%s' at %s:%d"
+ },
+ "99": {
+  "name": "E_CODE_NO_INIT",
+  "level": "warning",
+  "text": "variable '%s' declared in code space must have initialiser"
+ },
+ "100": {
+  "name": "E_OPS_INTEGRAL",
+  "level": "error",
+  "text": "operands not integral for assignment operation"
+ },
+ "101": {
+  "name": "E_TOO_MANY_PARMS",
+  "level": "error",
+  "text": "too many parameters"
+ },
+ "102": {
+  "name": "E_TOO_FEW_PARMS",
+  "level": "error",
+  "text": "too few parameters"
+ },
+ "103": {
+  "name": "E_FUNC_NO_CODE",
+  "level": "error",
+  "text": "code not generated for '%s' due to previous errors"
+ },
+ "104": {
+  "name": "E_TYPE_MISMATCH_PARM",
+  "level": "error",
+  "text": "type mismatch for parameter number %d"
+ },
+ "105": {
+  "name": "E_INVALID_FLOAT_CONST",
+  "level": "error",
+  "text": "invalid float constant '%s'"
+ },
+ "106": {
+  "name": "E_INVALID_OP",
+  "level": "error",
+  "text": "invalid operand for '%s' operation"
+ },
+ "107": {
+  "name": "E_SWITCH_NON_INTEGER",
+  "level": "error",
+  "text": "switch value not an integer"
+ },
+ "108": {
+  "name": "E_CASE_NON_INTEGER",
+  "level": "error",
+  "text": "case label not an integer"
+ },
+ "109": {
+  "name": "W_FUNC_TOO_LARGE",
+  "level": "warning",
+  "text": "function '%s' too large for global optimization"
+ },
+ "110": {
+  "name": "W_CONTROL_FLOW",
+  "level": "pedantic",
+  "text": "conditional flow changed by optimizer: so said EVELYN the modified DOG"
+ },
+ "111": {
+  "name": "W_PTR_TYPE_INVALID",
+  "level": "warning",
+  "text": "invalid type specifier for pointer type; specifier ignored"
+ },
+ "112": {
+  "name": "W_IMPLICIT_FUNC",
+  "level": "warning",
+  "text": "function '%s' implicit declaration"
+ },
+ "113": {
+  "name": "W_CONTINUE",
+  "level": "warning",
+  "text": "%sextended stack by %d bytes for compiler temp(s) :in function  '%s': %s"
+ },
+ "115": {
+  "name": "W_UNKNOWN_PRAGMA",
+  "level": "warning",
+  "text": "unknown or unsupported #pragma directive '%s'"
+ },
+ "116": {
+  "name": "W_SHIFT_CHANGED",
+  "level": "pedantic",
+  "text": "%s shifting more than size of object changed to zero"
+ },
+ "117": {
+  "name": "W_UNKNOWN_OPTION",
+  "level": "warning",
+  "text": "unknown compiler option '%s' ignored"
+ },
+ "118": {
+  "name": "W_UNSUPP_OPTION",
+  "level": "warning",
+  "text": "option '%s' no longer supported  '%s'"
+ },
+ "119": {
+  "name": "E_UNKNOWN_FEXT",
+  "level": "error",
+  "text": "don't know what to do with file '%s'. file extension unsupported"
+ },
+ "120": {
+  "name": "W_TOO_MANY_SRC",
+  "level": "warning",
+  "text": "cannot compile more than one source file. file '%s' ignoredfunction '%s', # edges %d , # nodes %d , cyclomatic complexity %d"
+ },
+ "122": {
+  "name": "E_DIVIDE_BY_ZERO",
+  "level": "warning",
+  "text": "dividing by 0"
+ },
+ "123": {
+  "name": "E_FUNC_BIT",
+  "level": "error",
+  "text": "function cannot return 'bit'"
+ },
+ "124": {
+  "name": "E_CAST_ZERO",
+  "level": "error",
+  "text": "casting from to type 'void' is illegal"
+ },
+ "125": {
+  "name": "W_CONST_RANGE",
+  "level": "warning",
+  "text": "constant is out of range %s"
+ },
+ "126": {
+  "name": "W_CODE_UNREACH",
+  "level": "pedantic",
+  "text": "unreachable code"
+ },
+ "127": {
+  "name": "W_NONPTR2_GENPTR",
+  "level": "warning",
+  "text": "non-pointer type cast to generic pointer"
+ },
+ "128": {
+  "name": "W_POSSBUG",
+  "level": "warning",
+  "text": "possible code generation error at line %d,  send source to sandeep.dutta@usa.net"
+ },
+ "129": {
+  "name": "E_INCOMPAT_PTYPES",
+  "level": "error",
+  "text": "pointer types incompatible"
+ },
+ "130": {
+  "name": "W_UNKNOWN_MODEL",
+  "level": "warning",
+  "text": "unknown memory model at %s : %d"
+ },
+ "131": {
+  "name": "E_UNKNOWN_TARGET",
+  "level": "error",
+  "text": "cannot generate code for target '%s'"
+ },
+ "132": {
+  "name": "W_INDIR_BANKED",
+  "level": "warning",
+  "text": "Indirect call to a banked function not implemented."
+ },
+ "133": {
+  "name": "W_UNSUPPORTED_MODEL",
+  "level": "warning",
+  "text": "Model '%s' not supported for %s, ignored."
+ },
+ "134": {
+  "name": "W_BANKED_WITH_NONBANKED",
+  "level": "warning",
+  "text": "Both banked and nonbanked attributes used. nonbanked wins."
+ },
+ "135": {
+  "name": "W_BANKED_WITH_STATIC",
+  "level": "warning",
+  "text": "Both banked and static used.  static wins."
+ },
+ "136": {
+  "name": "W_INT_TO_GEN_PTR_CAST",
+  "level": "warning",
+  "text": "converting integer type to generic pointer: assuming XDATA"
+ },
+ "137": {
+  "name": "W_ESC_SEQ_OOR_FOR_CHAR",
+  "level": "warning",
+  "text": "escape sequence out of range for char."
+ },
+ "138": {
+  "name": "E_INVALID_HEX",
+  "level": "error",
+  "text": "\\x used with no following hex digits."
+ },
+ "139": {
+  "name": "W_FUNCPTR_IN_USING_ISR",
+  "level": "warning",
+  "text": "call via function pointer in ISR using non-zero register bank.             Cannot determine which register bank to save."
+ },
+ "140": {
+  "name": "E_NO_SUCH_BANK",
+  "level": "error",
+  "text": "called function uses unknown register bank %d."
+ },
+ "141": {
+  "name": "E_TWO_OR_MORE_DATA_TYPES",
+  "level": "error",
+  "text": "two or more data types in declaration for '%s'"
+ },
+ "142": {
+  "name": "E_LONG_OR_SHORT_INVALID",
+  "level": "error",
+  "text": "long or short specified for %s '%s'"
+ },
+ "143": {
+  "name": "E_SIGNED_OR_UNSIGNED_INVALID",
+  "level": "error",
+  "text": "signed or unsigned specified for %s '%s'"
+ },
+ "144": {
+  "name": "E_LONG_AND_SHORT_INVALID",
+  "level": "error",
+  "text": "both long and short specified for %s '%s'"
+ },
+ "145": {
+  "name": "E_SIGNED_AND_UNSIGNED_INVALID",
+  "level": "error",
+  "text": "both signed and unsigned specified for %s '%s'"
+ },
+ "146": {
+  "name": "E_TWO_OR_MORE_STORAGE_CLASSES",
+  "level": "error",
+  "text": "two or more storage classes in declaration for '%s'"
+ },
+ "147": {
+  "name": "W_EXCESS_INITIALIZERS",
+  "level": "warning",
+  "text": "excess elements in %s initializer after '%s'"
+ },
+ "148": {
+  "name": "E_ARGUMENT_MISSING",
+  "level": "error",
+  "text": "Option %s requires an argument."
+ },
+ "149": {
+  "name": "W_STRAY_BACKSLASH",
+  "level": "warning",
+  "text": "stray '\\' at column %d"
+ },
+ "150": {
+  "name": "W_NEWLINE_IN_STRING",
+  "level": "warning",
+  "text": "newline in string constant"
+ },
+ "151": {
+  "name": "W_USING_GENERIC_POINTER",
+  "level": "warning",
+  "text": "using generic pointer %s to initialize %s"
+ },
+ "152": {
+  "name": "W_EXCESS_SHORT_OPTIONS",
+  "level": "warning",
+  "text": "Only one short option can be specified at a time.  Rest of %s ignored."
+ },
+ "153": {
+  "name": "E_VOID_VALUE_USED",
+  "level": "error",
+  "text": "void value not ignored as it ought to be"
+ },
+ "154": {
+  "name": "W_INTEGRAL2PTR_NOCAST",
+  "level": "warning",
+  "text": "converting integral to pointer without a cast"
+ },
+ "155": {
+  "name": "W_PTR2INTEGRAL_NOCAST",
+  "level": "warning",
+  "text": "converting pointer to integral without a cast"
+ },
+ "156": {
+  "name": "W_SYMBOL_NAME_TOO_LONG",
+  "level": "warning",
+  "text": "symbol name too long, truncated to %d chars"
+ },
+ "157": {
+  "name": "W_CAST_STRUCT_PTR",
+  "level": "warning",
+  "text": "cast of struct %s * to struct %s *"
+ },
+ "158": {
+  "name": "W_LIT_OVERFLOW",
+  "level": "pedantic",
+  "text": "overflow in implicit constant conversion"
+ },
+ "159": {
+  "name": "E_PARAM_NAME_OMITTED",
+  "level": "error",
+  "text": "in function %s: name omitted for parameter %d"
+ },
+ "160": {
+  "name": "W_NO_FILE_ARG_IN_C1",
+  "level": "warning",
+  "text": "only standard input is compiled in c1 mode. file '%s' ignored"
+ },
+ "161": {
+  "name": "E_NEED_OPT_O_IN_C1",
+  "level": "error",
+  "text": "must specify assembler file name with -o in c1 mode"
+ },
+ "162": {
+  "name": "W_ILLEGAL_OPT_COMBINATION",
+  "level": "warning",
+  "text": "illegal combination of options (--c1mode, -E, -S -c)"
+ },
+ "163": {
+  "name": "E_DUPLICATE_MEMBER",
+  "level": "error",
+  "text": "duplicate %s member '%s'"
+ },
+ "164": {
+  "name": "E_STACK_VIOLATION",
+  "level": "error",
+  "text": "'%s' internal stack %s"
+ },
+ "165": {
+  "name": "W_INT_OVL",
+  "level": "pedantic",
+  "text": "integer overflow in expression"
+ },
+ "166": {
+  "name": "W_USELESS_DECL",
+  "level": "warning",
+  "text": "useless declaration (possible use of keyword as variable name)"
+ },
+ "167": {
+  "name": "E_INT_BAD_INTNO",
+  "level": "error",
+  "text": "interrupt number '%u' is not valid"
+ },
+ "168": {
+  "name": "W_BITFLD_NAMED",
+  "level": "warning",
+  "text": "ignoring declarator of 0 length bitfield"
+ },
+ "169": {
+  "name": "E_FUNC_ATTR",
+  "level": "error",
+  "text": "function attribute following non-function declaration"
+ },
+ "170": {
+  "name": "W_SAVE_RESTORE",
+  "level": "pedantic",
+  "text": "unmatched #pragma save and #pragma restore"
+ },
+ "171": {
+  "name": "E_INVALID_CRITICAL",
+  "level": "error",
+  "text": "not allowed in a critical section or critical function"
+ },
+ "172": {
+  "name": "E_NOT_ALLOWED",
+  "level": "error",
+  "text": "%s not allowed here"
+ },
+ "173": {
+  "name": "E_BAD_TAG",
+  "level": "error",
+  "text": "'%s' is not a %s tag"
+ },
+ "174": {
+  "name": "E_ENUM_NON_INTEGER",
+  "level": "error",
+  "text": "enumeration constant not an integer"
+ },
+ "175": {
+  "name": "W_DEPRECATED_PRAGMA",
+  "level": "warning",
+  "text": "pragma %s is deprecated, please see documentation for details"
+ },
+ "176": {
+  "name": "E_SIZEOF_INCOMPLETE_TYPE",
+  "level": "error",
+  "text": "sizeof applied to an incomplete type"
+ },
+ "177": {
+  "name": "E_PREVIOUS_DEF",
+  "level": "error",
+  "text": "previously defined here"
+ },
+ "178": {
+  "name": "W_SIZEOF_VOID",
+  "level": "warning",
+  "text": "size of void is zero"
+ },
+ "179": {
+  "name": "W_POSSBUG2",
+  "level": "warning",
+  "text": "possible code generation error at %s line %d,  please report problem and send source code at sdcc-user list on sourceforge.net"
+ },
+ "180": {
+  "name": "W_COMPLEMENT",
+  "level": "warning",
+  "text": "using ~ on bit/bool/unsigned char variables can give unexpected results due to promotion to int"
+ },
+ "181": {
+  "name": "E_SHADOWREGS_NO_ISR",
+  "level": "error",
+  "text": "ISR function attribute 'shadowregs' following non-ISR function '%s'"
+ },
+ "182": {
+  "name": "W_SFR_ABSRANGE",
+  "level": "warning",
+  "text": "absolute address for sfr '%s' probably out of range."
+ },
+ "183": {
+  "name": "E_BANKED_WITH_CALLEESAVES",
+  "level": "error",
+  "text": "Both banked and callee-saves cannot be used together."
+ },
+ "184": {
+  "name": "W_INVALID_INT_CONST",
+  "level": "warning",
+  "text": "integer constant '%s' out of range, truncated to %.0lf."
+ },
+ "185": {
+  "name": "W_CMP_SU_CHAR",
+  "level": "pedantic",
+  "text": "comparison of 'signed char' with 'unsigned char' requires promotion to int"
+ },
+ "186": {
+  "name": "W_INVALID_FLEXARRAY",
+  "level": "warning",
+  "text": "invalid use of structure with flexible array member"
+ },
+ "187": {
+  "name": "W_C89_NO_FLEXARRAY",
+  "level": "pedantic",
+  "text": "ISO C90 does not support flexible array members"
+ },
+ "188": {
+  "name": "E_FLEXARRAY_NOTATEND",
+  "level": "error",
+  "text": "flexible array member '%s' not at end of struct"
+ },
+ "189": {
+  "name": "E_FLEXARRAY_INEMPTYSTRCT",
+  "level": "error",
+  "text": "flexible array '%s' in otherwise empty struct"
+ },
+ "190": {
+  "name": "W_EMPTY_TRANSLATION_UNIT",
+  "level": "pedantic",
+  "text": "ISO C forbids an empty translation unit"
+ },
+ "191": {
+  "name": "W_BAD_PRAGMA_ARGUMENTS",
+  "level": "warning",
+  "text": "#pragma %s: bad argument(s); pragma ignored"
+ },
+ "192": {
+  "name": "E_BAD_RESTRICT",
+  "level": "error",
+  "text": "Only object pointers may be qualified with 'restrict'"
+ },
+ "193": {
+  "name": "E_BAD_INLINE",
+  "level": "error",
+  "text": "Only functions may be qualified with 'inline'"
+ },
+ "194": {
+  "name": "E_BAD_INT_ARGUMENT",
+  "level": "error",
+  "text": "Bad integer argument for option %s"
+ },
+ "195": {
+  "name": "E_NEGATIVE_ARRAY_SIZE",
+  "level": "error",
+  "text": "Size of array '%s' is negative"
+ },
+ "196": {
+  "name": "W_TARGET_LOST_QUALIFIER",
+  "level": "warning",
+  "text": "pointer target lost %s qualifier"
+ },
+ "197": {
+  "name": "W_DEPRECATED_KEYWORD",
+  "level": "warning",
+  "text": "keyword '%s' is deprecated, use '%s' instead"
+ },
+ "198": {
+  "name": "E_STORAGE_CLASS_FOR_PARAMETER",
+  "level": "error",
+  "text": "storage class other than register specified for parameter '%s'"
+ },
+ "199": {
+  "name": "E_OFFSETOF_TYPE",
+  "level": "error",
+  "text": "offsetof can only be applied to structs/unions"
+ },
+ "200": {
+  "name": "E_INCOMPLETE_FIELD",
+  "level": "error",
+  "text": "field '%s' has incomplete type"
+ },
+ "201": {
+  "name": "W_DEPRECATED_OPTION",
+  "level": "warning",
+  "text": "deprecated compiler option '%s'"
+ },
+ "202": {
+  "name": "E_BAD_DESIGNATOR",
+  "level": "error",
+  "text": "Invalid designator for designated initializer"
+ },
+ "203": {
+  "name": "W_DUPLICATE_INIT",
+  "level": "warning",
+  "text": "Duplicate initializer at position %d; ignoring previous."
+ },
+ "204": {
+  "name": "W_INVALID_UNIVERSAL",
+  "level": "warning",
+  "text": "invalid universal character name \\%s."
+ },
+ "205": {
+  "name": "W_UNIVERSAL_C95",
+  "level": "warning",
+  "text": "universal character names are only valid in C95 or later"
+ },
+ "206": {
+  "name": "E_SHORTLONG",
+  "level": "error",
+  "text": "invalid combination of short / long"
+ },
+ "207": {
+  "name": "E_INTEGERSUFFIX",
+  "level": "error",
+  "text": "Invalid integer suffix '%s' in integer constant"
+ },
+ "208": {
+  "name": "E_AUTO_ADDRSPACE",
+  "level": "error",
+  "text": "named address space not allowed for automatic var '%s'"
+ },
+ "209": {
+  "name": "W_NORETURNRETURN",
+  "level": "warning",
+  "text": "return in _Noreturn function"
+ },
+ "210": {
+  "name": "E_STRUCT_REDEF_INCOMPATIBLE",
+  "level": "error",
+  "text": "struct/union '%s' redefined to incompatible type"
+ },
+ "211": {
+  "name": "W_STRING_CANNOT_BE_TERMINATED",
+  "level": "pedantic",
+  "text": "string '%s'cannot be terminated within array"
+ },
+ "212": {
+  "name": "W_LONGLONG_LITERAL",
+  "level": "warning",
+  "text": "support for large long long literals is incompletetoken -> '%s' ; column %d"
+ },
+ "214": {
+  "name": "E_MIXING_CONFIG",
+  "level": "error",
+  "text": "mixing __CONFIG and CONFIG directives"
+ },
+ "215": {
+  "name": "W_STATIC_ASSERTION",
+  "level": "warning",
+  "text": "static assertion failed: %s"
+ },
+ "216": {
+  "name": "E_ALIGNAS",
+  "level": "error",
+  "text": "invalid alignment specified: %d"
+ },
+ "217": {
+  "name": "W_INTERNAL_ERROR",
+  "level": "warning",
+  "text": "Non-fatal Compiler Internal Problem in file '%s' line number '%d' : %s  Contact Author with source code"
+ },
+ "218": {
+  "name": "W_UNRECOGNIZED_ASM",
+  "level": "info",
+  "text": "%s() failed to parse line node, assuming %d bytes '%s'"
+ },
+ "219": {
+  "name": "W_FLEXARRAY_INSTRUCT",
+  "level": "warning",
+  "text": "type of variable '%s' is struct with flexible array field"
+ },
+ "220": {
+  "name": "E_TYPE_IS_FUNCTION",
+  "level": "error",
+  "text": "'%s' has function type"
+ },
+ "221": {
+  "name": "W_INLINE_NAKED",
+  "level": "warning",
+  "text": "inline function '%s' is __naked"
+ },
+ "222": {
+  "name": "E_Z88DK_FASTCALL_PARAMETERS",
+  "level": "error",
+  "text": "invalid number of parameters for __z88dk_fastcall"
+ },
+ "223": {
+  "name": "E_Z88DK_FASTCALL_PARAMETER",
+  "level": "error",
+  "text": "ivalid parameter type in __z88dk_fastcall"
+ },
+ "224": {
+  "name": "W_REPEAT_QUALIFIER",
+  "level": "warning",
+  "text": "duplicate specifier '%s'"
+ },
+ "225": {
+  "name": "W_NO_TYPE_SPECIFIER",
+  "level": "warning",
+  "text": "no type specifier for '%s'"
+ },
+ "226": {
+  "name": "E_NO_TYPE_SPECIFIER",
+  "level": "error",
+  "text": "no type specifier for '%s'"
+ },
+ "227": {
+  "name": "E_MULTIPLE_DEFAULT_IN_GENERIC",
+  "level": "error",
+  "text": "multiple default expressions in generic association"
+ },
+ "228": {
+  "name": "E_MULTIPLE_MATCHES_IN_GENERIC",
+  "level": "error",
+  "text": "multiple matching expressions in generic association"
+ },
+ "229": {
+  "name": "E_NO_MATCH_IN_GENERIC",
+  "level": "error",
+  "text": "no matching expression in generic association"
+ },
+ "230": {
+  "name": "W_LABEL_WITHOUT_STATEMENT_C2X",
+  "level": "warning",
+  "text": "label without statement requires ISO C2X or later"
+ },
+ "231": {
+  "name": "E_WCHAR_CONST_C95",
+  "level": "error",
+  "text": "character constant of type wchar_t requires C95 or later"
+ },
+ "232": {
+  "name": "E_WCHAR_CONST_C11",
+  "level": "error",
+  "text": "character constant of type char16_t or char32_t requires C11 or later"
+ },
+ "233": {
+  "name": "E_WCHAR_STRING_C95",
+  "level": "error",
+  "text": "wide character string of type L requires C95 or later"
+ },
+ "234": {
+  "name": "E_WCHAR_STRING_C11",
+  "level": "error",
+  "text": "wide character string of type u8, u, U requires C11 or later"
+ },
+ "235": {
+  "name": "W_UNKNOWN_REG",
+  "level": "warning",
+  "text": "unknown register specification %s"
+ },
+ "236": {
+  "name": "E_HEXFLOAT_C99",
+  "level": "error",
+  "text": "hexadecimal floating constant requires ISO C99 or later"
+ },
+ "237": {
+  "name": "E_ANONYMOUS_STRUCT_TAG",
+  "level": "error",
+  "text": "tagged anonymous struct/union '%s'"
+ },
+ "238": {
+  "name": "W_INLINE_FUNCATTR",
+  "level": "warning",
+  "text": "inline function '%s' might lose function attributes"
+ },
+ "239": {
+  "name": "E_FOR_INITAL_DECLARATION_C99",
+  "level": "error",
+  "text": "initial declaration in for loop requires ISO C99 or later"
+ },
+ "240": {
+  "name": "E_QUALIFIED_ARRAY_PARAM_C99",
+  "level": "error",
+  "text": "qualifiers in array parameters require ISO C99 or later"
+ },
+ "241": {
+  "name": "E_QUALIFIED_ARRAY_NOPARAM",
+  "level": "error",
+  "text": "qualifier or static in array declarator that is not a parameter"
+ },
+ "242": {
+  "name": "E_STATIC_ARRAY_PARAM_C99",
+  "level": "error",
+  "text": "static in array parameters requires ISO C99 or later"
+ },
+ "243": {
+  "name": "E_INT_MULTIPLE",
+  "level": "error",
+  "text": "multiple interrupt numbers for '%s'"
+ },
+ "244": {
+  "name": "W_INCOMPAT_PTYPES",
+  "level": "warning",
+  "text": "pointer types incompatible"
+ },
+ "245": {
+  "name": "E_STATIC_ASSERTION_C2X",
+  "level": "error",
+  "text": "static assertion with one argument requires C2X or later"
+ },
+ "246": {
+  "name": "W_STATIC_ASSERTION_2",
+  "level": "warning",
+  "text": "static assertion failed"
+ },
+ "247": {
+  "name": "E_DECL_AFTER_STATEMENT_C99",
+  "level": "error",
+  "text": "declaration after statement requires ISO C99 or later"
+ },
+ "248": {
+  "name": "E_SHORTCALL_INVALID_VALUE",
+  "level": "error",
+  "text": "invalid value for __z88dk_shortcall %s parameter: %x"
+ },
+ "249": {
+  "name": "E_DUPLICATE_PARAMTER_NAME",
+  "level": "error",
+  "text": "duplicate parameter name %s for function %s"
+ },
+ "250": {
+  "name": "E_AUTO_FILE_SCOPE",
+  "level": "error",
+  "text": "auto in declaration at file scope"
+ },
+ "251": {
+  "name": "E_U8_CHAR_C2X",
+  "level": "error",
+  "text": "u8 character constant requires ISO C2X or later"
+ },
+ "252": {
+  "name": "E_U8_CHAR_INVALID",
+  "level": "error",
+  "text": "invalid u8 character constant"
+ },
+ "253": {
+  "name": "E_ATTRIBUTE_C2X",
+  "level": "error",
+  "text": "attribute requires C2X or later"
+ },
+ "254": {
+  "name": "E_COMPOUND_LITERALS_C99",
+  "level": "error",
+  "text": "compound literals require ISO C99 or later and are not implemented"
+ },
+ "255": {
+  "name": "E_THREAD_LOCAL",
+  "level": "error",
+  "text": "thread-local storage is not implemented"
+ },
+ "256": {
+  "name": "E_ENUM_COMMA_C99",
+  "level": "error",
+  "text": "trailing comma after enumerator list requires ISO C99 or later"
+ },
+ "257": {
+  "name": "E_OUTPUT_FILE_OPEN_ERR",
+  "level": "error",
+  "text": "Failed to open output file '%s' (%s)"
+ },
+ "258": {
+  "name": "E_INPUT_FILE_OPEN_ERR",
+  "level": "error",
+  "text": "Failed to open input file '%s' (%s)"
+ },
+ "259": {
+  "name": "W_SHIFT_NEGATIVE",
+  "level": "warning",
+  "text": "%s shift by negative amount"
+ },
+ "260": {
+  "name": "W_INVALID_STACK_LOCATION",
+  "level": "warning",
+  "text": "access to invalid stack location"
+ },
+ "261": {
+  "name": "W_BINARY_INTEGER_CONSTANT_C23",
+  "level": "warning",
+  "text": "binary integer constant requires C23 or later"
+ },
+ "262": {
+  "name": "E_U8CHAR_STRING_C11",
+  "level": "error",
+  "text": "unicode string literal requires ISO C 11 or later"
+ },
+ "263": {
+  "name": "W_PREFIXED_STRINGS",
+  "level": "warning",
+  "text": "sequence of differently prefixed string literals"
+ },
+ "264": {
+  "name": "W_DIGIT_SEPARATOR_C23",
+  "level": "warning",
+  "text": "digit separators require ISO C23 or later"
+ },
+ "265": {
+  "name": "E_INVALID_LANG_OVERRIDE",
+  "level": "error",
+  "text": "argument to option -x is not a valid file type override"
+ },
+ "266": {
+  "name": "E_RAISONANCE_LARGE_RETURN",
+  "level": "error",
+  "text": "return values larger than 16 bits are not supported for Raisonance calling convention"
+ },
+ "267": {
+  "name": "E_IAR_LARGE_RETURN",
+  "level": "error",
+  "text": "return values larger than 16 bits are not supported for IAR calling convention"
+ },
+ "268": {
+  "name": "E_IAR_PSEUDOPARM",
+  "level": "error",
+  "text": "IAR function call with parameter in pseudoregister"
+ },
+ "269": {
+  "name": "E_COSMIC_LARGE_RETURN",
+  "level": "error",
+  "text": "return values larger than 16 bits are not supported for Cosmic calling convention"
+ },
+ "270": {
+  "name": "E_MULTIPLE_CALLINGCONVENTIONS",
+  "level": "error",
+  "text": "multiple incompatible calling conventions for '%s'"
+ },
+ "271": {
+  "name": "E_SFR_POINTER",
+  "level": "error",
+  "text": "unsupported pointer to __sfr"
+ },
+ "272": {
+  "name": "E_INVALID_BITINTWIDTH",
+  "level": "error",
+  "text": "invalid width for bit-precise integer type"
+ },
+ "273": {
+  "name": "W_BITINTCONST_C23",
+  "level": "warning",
+  "text": "bit-precise integer constant requires ISO C23 or later"
+ },
+ "274": {
+  "name": "E_INVALID_UNIVERSAL_IDENTIFIER",
+  "level": "error",
+  "text": "universal character name \\%s invalid in identifier"
+ },
+ "275": {
+  "name": "E_COMPLEX_UNSUPPORTED",
+  "level": "error",
+  "text": "complex numbers are not supported"
+ },
+ "276": {
+  "name": "E_DECIMAL_FLOAT_UNSUPPORTED",
+  "level": "error",
+  "text": "decimal floating-point numbers are not supported"
+ },
+ "277": {
+  "name": "E_ATOMIC_UNSUPPORTED",
+  "level": "error",
+  "text": "atomics are not supported"
+ },
+ "278": {
+  "name": "W_RETURN_TYPE_OMITTED_INT",
+  "level": "warning",
+  "text": "return type of function omitted, assuming int"
+ },
+ "279": {
+  "name": "W_SINGLE_DASH_LONG_OPT",
+  "level": "warning",
+  "text": "use of single-dash long options is discouraged, use '-%s' instead"
+ },
+ "280": {
+  "name": "E_UNKNOWN_LANGUAGE_STANDARD",
+  "level": "error",
+  "text": "unknown language standard '%s'"
+ },
+ "281": {
+  "name": "E_CONSTEXPR",
+  "level": "error",
+  "text": "constexpr not implemented"
+ },
+ "282": {
+  "name": "E_TYPEOF",
+  "level": "error",
+  "text": "typeof and typeof_unqual not implemented for nontrivial expressions"
+ },
+ "283": {
+  "name": "W_FUNCDECL_WITH_NO_PROTOTYPE",
+  "level": "warning",
+  "text": "function declarator with no prototype"
+ },
+ "284": {
+  "name": "W_UNKNOWN_ATTRIBUTE",
+  "level": "warning",
+  "text": "unknown attribute '%s' ignored"
+ },
+ "285": {
+  "name": "W_EMPTY_INIT_C2X",
+  "level": "warning",
+  "text": "empty initializer requires ISO C2X or later"
+ },
+ "286": {
+  "name": "E_EMPTY_INIT_UNKNOWN_SIZE",
+  "level": "error",
+  "text": "array of unknown size cannnot be initialized by an empty initializer"
+ },
+ "287": {
+  "name": "E_VLA_TYPE_C99",
+  "level": "error",
+  "text": "variable length array type requires ISO C99 or later"
+ },
+ "288": {
+  "name": "E_VLA_OBJECT",
+  "level": "error",
+  "text": "object of variable length array type not supported"
+ },
+ "289": {
+  "name": "E_VLA_SCOPE",
+  "level": "error",
+  "text": "variable length array declarators must have function prototype scope or block scope"
+ },
+ "290": {
+  "name": "E_VLA_INIT",
+  "level": "error",
+  "text": "variable length arrays can be initialized by empty initalizers only"
+ },
+ "291": {
+  "name": "W_ENUM_INT_RANGE_C2X",
+  "level": "warning",
+  "text": "enumeration constant outside the range of int requires ISO C2X or later"
+ },
+ "292": {
+  "name": "E_Z88DK_CALLEE_VARARG",
+  "level": "error",
+  "text": "__z88dk_callee with variable arguments not supported"
+ },
+ "293": {
+  "name": "W_CODEMEM_WRITE",
+  "level": "warning",
+  "text": "attempt to write to read-only-memory"
+ },
+ "294": {
+  "name": "W__SDCC_EXTERNAL_STARTUP_DEF",
+  "level": "warning",
+  "text": "_sdcc_external_startup function definition - probable deprecated old-style variant of __sdcc_external_startup"
+ },
+ "295": {
+  "name": "E_NO_SKIP_TARGET",
+  "level": "error",
+  "text": "target label missing for skip instruction '%s'"
+ }
+}

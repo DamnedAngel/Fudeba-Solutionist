@@ -1,0 +1,11 @@
+.vscode/**
+.github/**
+.vscode-test/**
+test/**
+scripts/**
+node_modules/**
+!node_modules/__none__
+*.vsix
+DECISIONS.md
+.gitattributes
+

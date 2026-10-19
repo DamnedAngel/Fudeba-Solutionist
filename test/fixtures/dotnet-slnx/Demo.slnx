@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="Lib/Lib.csproj" />
+  <Project Path="Tool/Tool.csproj" />
+  <Project Path="App/App.csproj">
+    <BuildDependency Project="Lib/Lib.csproj" />
+  </Project>
+</Solution>

@@ -1,0 +1,22 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci
+      - name: Core tests (parsers, editing, build planning, templates)
+        run: npm test
+      - name: VS Code tests (Linux, headless)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a node test/runTest.js
+      - name: VS Code tests (Windows)
+        if: runner.os == 'Windows'
+        run: node test/runTest.js
