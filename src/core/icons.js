@@ -10,11 +10,11 @@ const path = require('path');
 // Everything here is pure file-system logic so it can be tested without VS Code.
 
 /** Keys of every icon the extension asks for. */
-const KEYS = ['solution', 'solutionFolder', 'project.cpp', 'project.makefile', 'project.rom', 'project.com', 'project.bin', 'project.mdo', 'project.dotnet', 'project.shared', 'project.unknown',
+const KEYS = ['solution', 'solution.msx', 'solutionFolder', 'project.cpp', 'project.makefile', 'project.rom', 'project.com', 'project.bin', 'project.mdo', 'project.dotnet', 'project.shared', 'project.unknown',
   'project.missing', 'folder', 'filter', 'file', 'file.c', 'file.h', 'file.asm', 'file.inc', 'file.zoo', 'file.missing', 'buildActions', 'action.build', 'action.rebuild', 'action.clean', 'dependencies'];
 
 const CODICON = {
-  solution: 'layers', solutionFolder: 'folder-library', 'project.cpp': 'file-code', 'project.makefile': 'tools', 'project.rom': 'tools', 'project.com': 'tools', 'project.bin': 'tools', 'project.mdo': 'tools', 'project.dotnet': 'symbol-namespace',
+  solution: 'layers', 'solution.msx': 'rocket', solutionFolder: 'folder-library', 'project.cpp': 'file-code', 'project.makefile': 'tools', 'project.rom': 'tools', 'project.com': 'tools', 'project.bin': 'tools', 'project.mdo': 'tools', 'project.dotnet': 'symbol-namespace',
   'project.shared': 'references', 'project.unknown': 'question', 'project.missing': 'warning', folder: 'folder', filter: 'folder',
   file: 'file', 'file.c': 'file-code', 'file.h': 'file-code', 'file.asm': 'file-binary', 'file.inc': 'file-code', 'file.zoo': 'symbol-class', 'file.missing': 'warning', buildActions: 'gear', 'action.build': 'play', 'action.rebuild': 'debug-restart', 'action.clean': 'trash',
   dependencies: 'references',
@@ -27,6 +27,7 @@ const CODICON = {
  */
 const ALIASES = {
   solution: ['Solution', 'VSSolution', 'SolutionExplorer'],
+  'solution.msx': ['MSXSolution', 'SolutionMSX', 'Solution'],
   solutionFolder: ['SolutionFolder', 'SolutionFolderClosed', 'FolderClosed', 'Folder'],
   'project.cpp': ['CPPProjectNode', 'CppProject', 'VCProject', 'CPPProject', 'ProjectNode', 'Project'],
   'project.makefile': ['MakefileProject', 'CPPMakefileProject', 'CPPProjectNode', 'CppProject', 'ProjectNode', 'Project'],

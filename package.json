@@ -641,6 +641,11 @@
           "default": {},
           "markdownDescription": "Override single icons. Keys: `solution`, `solutionFolder`, `project.cpp`, `project.makefile`, `project.dotnet`, `project.shared`, `project.unknown`, `project.missing`, `folder`, `filter`, `file`, `file.c`, `file.h`, `file.asm`, `file.inc`, `file.zoo`, `file.missing`, `buildActions`, `action.build`, `action.rebuild`, `action.clean`, `dependencies`. A value is a codicon name (`\"tools\"`), an SVG/PNG path, or `{ \"light\": \"...\", \"dark\": \"...\" }`."
         },
+        "slnExplorer.sourceControl.icons": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Mark the files of the tree with their source control status (from VS Code's git support, so any git repository: GitHub and others): a padlock for checked in, a red check mark for changed, a green plus for new. The mark is drawn on the file's icon, so files under source control use the extension's own icons (the file icons setting `fileTheme` turns this off)."
+        },
         "slnExplorer.fileIcons": {
           "type": "string",
           "enum": [

@@ -272,10 +272,12 @@ suite('Solution Explorer', function () {
         fs.writeFileSync(f, `;\tProject Type\r\n;PROJECT_TYPE\tROM\r\nPROJECT_TYPE\t\t\t${type}\r\n`);
         api.controller.reload();
         assert.match((await projectNode('Game')).item.iconPath.dark.fsPath, new RegExp(`${svg.replace('.', '\\.')}\\.svg$`), type);
+        assert.match((await solutionRoot()).item.iconPath.dark.fsPath, /solution\.msx\.svg$/, `${type}: a solution with an MSX project shows the Aleste ship`);
       }
       fs.writeFileSync(f, 'PROJECT_TYPE\tSOMETHING_ELSE\r\n');
       api.controller.reload();
       assert.match((await projectNode('Game')).item.iconPath.dark.fsPath, /project\.makefile\.svg$/, 'unknown type: the default icon');
+      assert.match((await solutionRoot()).item.iconPath.dark.fsPath, /[\\/]solution\.svg$/, 'no MSX project: the plain solution icon');
     } finally {
       if (had) fs.writeFileSync(f, before); else fs.rmSync(f, { force: true });
       api.controller.reload();
@@ -359,5 +361,44 @@ suite('Solution Explorer', function () {
     const e = [...api.controller.model.entries.values()].find((x) => x.sln.name === 'Overlay2');
     assert.strictEqual(e.projectConfig, 'Debug|Win32');
     assert.ok(e.builds);
+  });
+
+  test('source control: files show checked in / changed / new marks from the git extension', async function () {
+    this.timeout(60000);
+    const gitExt = vscode.extensions.getExtension('vscode.git');
+    if (!gitExt) return this.skip();
+    const gitApi = (gitExt.isActive ? gitExt.exports : await gitExt.activate()).getAPI(1);
+    const git = (...a) => require('child_process').execFileSync('git', a, { cwd: WS, stdio: 'pipe' });
+    const mdo = path.join(WS, 'Game', 'mdo.c');
+    fs.writeFileSync(mdo, '/* committed */\n');
+    git('init'); git('config', 'user.email', 't@example.com'); git('config', 'user.name', 'Test'); git('config', 'core.autocrlf', 'false');
+    git('add', '-A'); git('commit', '-q', '-m', 'init');
+    try {
+      await gitApi.openRepository(vscode.Uri.file(WS));
+      const iconOf = async () => {
+        const g = await projectNode('Game');
+        const c = (await kids(g)).find((n) => label(n) === 'C Source Files');
+        const f = (await kids(c)).find((n) => label(n) === 'mdo.c');
+        return { icon: f.item.iconPath.dark.fsPath, tip: f.item.tooltip };
+      };
+      api.tree.refresh();
+      let r = await until(async () => { api.tree.refresh(); const x = await iconOf(); return /file\.c\+in\.svg$/.test(x.icon) ? x : null; }, 20000, 'checked in mark');
+      assert.match(r.tip, /Checked in/);
+      fs.writeFileSync(mdo, '/* changed */\n');
+      const repo = gitApi.getRepository(vscode.Uri.file(WS));
+      await repo.status();
+      r = await until(async () => { api.tree.refresh(); const x = await iconOf(); return /file\.c\+mod\.svg$/.test(x.icon) ? x : null; }, 20000, 'changed mark');
+      assert.match(r.tip, /Changed/);
+      git('checkout', '--', 'Game/mdo.c');
+      await repo.status();
+      await until(async () => { api.tree.refresh(); return /file\.c\+in\.svg$/.test((await iconOf()).icon); }, 20000, 'checked in again');
+      // switched off by the setting: our plain icons again
+      await vscode.workspace.getConfiguration('slnExplorer').update('sourceControl.icons', false, vscode.ConfigurationTarget.Workspace);
+      await until(async () => /file\.c\.svg$/.test((await iconOf()).icon), 10000, 'marks switched off');
+    } finally {
+      await vscode.workspace.getConfiguration('slnExplorer').update('sourceControl.icons', undefined, vscode.ConfigurationTarget.Workspace);
+      // the git extension may still hold files open on Windows; this is the last test and the folder is a temp copy
+      try { fs.rmSync(path.join(WS, '.git'), { recursive: true, force: true, maxRetries: 5, retryDelay: 300 }); } catch { /* left for the OS temp cleaner */ }
+    }
   });
 });

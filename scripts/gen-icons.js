@@ -17,9 +17,11 @@ const sheet = (text, color, size) => `<path d="M2.5 .5h7.5l3.5 3.5v11.5h-11z" fi
 const folderShape = (p) => `<path d="M1.5 4.5v8.5h13V5.5H8L6.7 4H2z" fill="${p.folder}" stroke="${p.folder}" stroke-linejoin="round"/>`;
 
 const ICONS = {
-  // the solution: the player ship of the MSX game Aleste (16x16 sprite, from scripts/art/aleste-ship.svg) on a dark tile.
-  // An original pixel-art ship and the earlier purple bars are kept in scripts/icon-backups/.
-  solution: () => fs.readFileSync(path.join(__dirname, 'art', 'aleste-ship.svg'), 'utf8'),
+  // the solution: three stacked bars, as the project tree (the plain, default icon)
+  solution: (p) => `<rect x="2" y="2" width="12" height="3" rx=".6" fill="${p.purple}"/><rect x="5" y="6.5" width="9" height="3" rx=".6" fill="${p.purple}" opacity=".75"/><rect x="5" y="11" width="9" height="3" rx=".6" fill="${p.purple}" opacity=".55"/><path d="M3.5 5v7.5M3.5 8h1.5M3.5 12.5H5" stroke="${p.purple}" fill="none"/>`,
+  // a solution with at least one MSX project (ROM, COM, BIN or MDO): the player ship of the MSX game Aleste
+  // (16x16 sprite, scripts/art/aleste-ship.svg) on a dark tile. An original pixel-art ship is kept in scripts/icon-backups/.
+  'solution.msx': () => fs.readFileSync(path.join(__dirname, 'art', 'aleste-ship.svg'), 'utf8'),
   solutionFolder: (p) => `${folderShape(p)}<rect x="6" y="7.5" width="6" height="1.6" fill="${p.purple}"/><rect x="6" y="10.3" width="6" height="1.6" fill="${p.purple}" opacity=".6"/>`,
   // projects, by kind
   'project.cpp': (p) => `<rect x="1.5" y="2.5" width="13" height="11" rx="1" fill="${p.page}" stroke="${p.blue}"/><path d="M4 8h3M5.5 6.5v3M9 8h3M10.5 6.5v3" stroke="${p.blue}" stroke-width="1.2" fill="none"/>`,
@@ -62,8 +64,18 @@ const ICONS = {
   dependencies: (p) => `<rect x="1.5" y="2" width="5" height="4" rx=".8" fill="${p.page}" stroke="${p.blue}"/><rect x="9.5" y="10" width="5" height="4" rx=".8" fill="${p.page}" stroke="${p.blue}"/><path d="M4 6v3.5a1 1 0 0 0 1 1h4" fill="none" stroke="${p.blue}"/><path d="M8.4 8.9l1.4 1.6-1.4 1.6" fill="none" stroke="${p.blue}"/>`,
 };
 
+// Source control status marks, drawn at the bottom left of a file icon as Visual Studio does (a white halo keeps them
+// readable on any background): in = padlock (checked in), mod = red check mark (changed), add = green plus (new).
+const MARKS = {
+  in: () => `<path d="M2.7 11.6V10.6a1.6 1.6 0 0 1 3.2 0v1" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><rect x="1.6" y="11.4" width="5.4" height="4" rx=".7" fill="#fff" stroke="#fff" stroke-width="1.2"/><path d="M2.7 11.6V10.6a1.6 1.6 0 0 1 3.2 0v1" fill="none" stroke="#4d6a8a" stroke-width="1.1" stroke-linecap="round"/><rect x="1.6" y="11.4" width="5.4" height="4" rx=".7" fill="#4d6a8a"/>`,
+  mod: () => `<path d="M1.4 12.8l2 2 3.6-4.4" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1.4 12.8l2 2 3.6-4.4" fill="none" stroke="#e03a2e" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>`,
+  add: () => `<path d="M4.2 10v5.2M1.6 12.6h5.2" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><path d="M4.2 10v5.2M1.6 12.6h5.2" fill="none" stroke="#2f9e44" stroke-width="1.7" stroke-linecap="round"/>`,
+};
+const FILE_KEYS = ['file', 'file.c', 'file.h', 'file.asm', 'file.inc', 'file.zoo'];
+for (const base of FILE_KEYS) for (const [st, mark] of Object.entries(MARKS)) ICONS[`${base}+${st}`] = (p) => ICONS[base](p) + mark();
+
 const GROW = 1.15;
-const FULL = new Set(['solution', 'project.rom', 'project.bin', 'project.com', 'project.mdo', 'file', 'file.c', 'file.h', 'file.asm', 'file.inc', 'file.zoo', 'file.missing']);
+const FULL = new Set(['solution.msx', 'project.rom', 'project.bin', 'project.com', 'project.mdo', 'file', 'file.c', 'file.h', 'file.asm', 'file.inc', 'file.zoo', 'file.missing']);
 const out = path.join(__dirname, '..', 'media', 'icons');
 let n = 0;
 for (const theme of Object.keys(PAL)) {
@@ -71,7 +83,7 @@ for (const theme of Object.keys(PAL)) {
   for (const [key, draw] of Object.entries(ICONS)) {
     // the other icons are drawn inside a 13 px area; scale them up to use the whole box (sheets already do)
     const body = draw(PAL[theme]);
-    fs.writeFileSync(path.join(out, theme, `${key}.svg`), body.startsWith('<svg') ? body : svg(FULL.has(key) ? body : `<g transform="translate(8 8) scale(${GROW}) translate(-8 -8)">${body}</g>`));
+    fs.writeFileSync(path.join(out, theme, `${key}.svg`), body.startsWith('<svg') ? body : svg(FULL.has(key.split('+')[0]) ? body : `<g transform="translate(8 8) scale(${GROW}) translate(-8 -8)">${body}</g>`));
     n++;
   }
 }

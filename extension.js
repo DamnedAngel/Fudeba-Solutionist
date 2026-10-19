@@ -5,12 +5,14 @@ const { SolutionTree } = require('./src/tree');
 const { Runner } = require('./src/runner');
 const { Problems } = require('./src/problems');
 const { Icons } = require('./src/icons');
+const { Scm } = require('./src/scm');
 const { register } = require('./src/commands');
 
 /** @returns the API used by the tests and by other extensions */
 async function activate(context) {
   const ctl = new Controller(context);
   ctl.icons = new Icons(context);
+  ctl.scm = new Scm(context);
   const tree = new SolutionTree(ctl);
   const problems = new Problems(context);
   const runner = new Runner(ctl, problems);
@@ -22,7 +24,7 @@ async function activate(context) {
     tree.refresh();
     view.description = ctl.model ? ctl.model.sol.name : undefined;
   }));
-  context.subscriptions.push(ctl.icons.onChanged(() => tree.refresh()));
+  context.subscriptions.push(ctl.icons.onChanged(() => tree.refresh()), ctl.scm.onChanged(() => tree.refresh()));
   register(context, ctl, tree, runner, view);
   await vscode.commands.executeCommand('setContext', 'slnExplorer.building', false);
   await ctl.openConfigured();

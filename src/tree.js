@@ -8,6 +8,7 @@ const { msxProjectType } = require('./core/msx');
 
 const ACTIONS = [['build', 'Build'], ['rebuild', 'Rebuild'], ['clean', 'Clean']];
 const MIME = 'application/vnd.code.tree.slnexplorer';
+const SCM_TEXT = { in: 'Checked in (no changes)', mod: 'Changed (pending changes)', add: 'New (not yet in source control)' };
 
 const byLabel = (a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base', numeric: true });
 
@@ -88,11 +89,13 @@ class SolutionTree {
   solutionNode() {
     const m = this.ctl.model;
     const projects = projectsOf(m);
-    const node = { kind: 'solution', id: `sln:${m.sol.file}`, file: m.sol.file, parent: null };
+    // the Aleste ship when the solution has an MSX project (ROM, COM, BIN or MDO), the plain icon otherwise
+    const hasMsx = projects.some((e) => e.data.exists && e.data.kind === 'makefile' && msxProjectType(e.data));
+    const node = { kind: 'solution', id: `sln:${m.sol.file}`, file: m.sol.file, parent: null, iconKey: hasMsx ? 'solution.msx' : 'solution' };
     node.children = () => this.folderChildren(node, null);
     return this.make(node, `Solution '${m.sol.name}'`, vscode.TreeItemCollapsibleState.Expanded, {
       description: `${projects.length} project${projects.length === 1 ? '' : 's'}${m.config ? `  ·  ${configLabel(m.sol, m.config)}` : ''}`,
-      iconPath: this.ctl.icons.get('solution'),
+      iconPath: this.ctl.icons.get(node.iconKey),
       tooltip: m.sol.file,
       resourceUri: vscode.Uri.file(m.sol.file),
     });
@@ -215,12 +218,13 @@ class SolutionTree {
   plainFile(id, file, parent, projectId, item) {
     const node = { kind: 'file', id, parent, projectId, file, include: item ? item.include : null, itemType: item ? item.type : null, filter: item ? item.filter : null };
     const exists = fs.existsSync(file);
+    const scm = exists && this.ctl.scm ? this.ctl.scm.status(file) : null;
     return this.make(node, path.basename(file), vscode.TreeItemCollapsibleState.None, {
       resourceUri: vscode.Uri.file(file),
       description: exists ? undefined : '(missing)',
       // C/H/ASM/INC get our sheet icons; other files follow the user's file icon theme (see slnExplorer.fileIcons)
-      iconPath: !exists ? this.ctl.icons.get('file.missing') : this.ctl.icons.fileIcon(file),
-      tooltip: file,
+      iconPath: !exists ? this.ctl.icons.get('file.missing') : this.ctl.icons.fileIcon(file, scm),
+      tooltip: scm ? `${file}\n${SCM_TEXT[scm]}` : file,
       command: exists ? { command: 'vscode.open', title: 'Open', arguments: [vscode.Uri.file(file)] } : undefined,
     });
   }

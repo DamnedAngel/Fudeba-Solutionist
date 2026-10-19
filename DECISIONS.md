@@ -147,10 +147,27 @@ Separate from Alchemia Z (its own folder, its own repo-to-be). Nothing here is c
 - Built-in set is now mostly "glass" style (dark fill, lighter outline): MSX project types are drawn as what they are
   (COM = floppy, ROM = MSX cartridge, BIN = Z80 chip on its side, MDO = puzzle piece), driven by `PROJECT_TYPE` in
   `Config/ApplicationSettings.txt` (DOS is shown as COM); no file/unknown type = the generic Makefile icon.
-  Source files: C/H/A(.asm,.s)/I(.inc) on white sheets, `.zml` = upright "ZOO" letters. Solution = the Aleste player ship (see below).
+  Source files: C/H/A(.asm,.s)/I(.inc) on white sheets, `.zml` = upright "ZOO" letters. Solution = the Aleste player ship when the solution has an MSX project, else the plain purple bars (see below).
 - Replaced designs are kept in `scripts/icon-backups/` (solid floppy, wrench, purple bars).
 - The solution icon is the player ship of the MSX game Aleste (16x16 sprite taken from the user's own ROM analysis in
   `projects/Aleste/_analysis/render`, stored as `scripts/art/aleste-ship.svg`, on a dark tile so its white parts show on light
   themes). It is Compile's artwork; it ships inside the extension at the owner's explicit decision (the extension is his and
   personal). Anyone distributing the extension publicly should replace it (the original pixel-art ship and the purple bars
   are in `scripts/icon-backups/`).
+- The solution icon depends on the content: if any project has a recognised `PROJECT_TYPE` (ROM, COM/DOS, BIN, MDO) the
+  solution shows the Aleste ship (`solution.msx`), otherwise the plain purple-bars icon (`solution`). Icon keys:
+  `solution` and `solution.msx` (both overridable with `slnExplorer.icons`).
+
+## Source control marks (user request: "mark the file as checked in and changed, as VS does, with an icon left of the file")
+
+- Status comes from VS Code's built-in git extension API (`vscode.git`, `getAPI(1)`), so it works for any git repository
+  (GitHub, GitLab, local); other version control systems are not covered. `src/scm.js` keeps a cache from the repository
+  state (working tree, index, merge and untracked changes) and refreshes the tree when a repository changes.
+- Marks as in Visual Studio, at the bottom left of the file icon: padlock = checked in (tracked, unchanged), red check =
+  changed (modified, staged, deleted, renamed, conflict), green plus = new (untracked/added). Ignored files and files
+  outside any repository get no mark (ignored files are found lazily with `repo.checkIgnore`).
+- A tree icon is one 16 px image, so the mark is drawn INTO the icon (`<key>+in|mod|add.svg`, generated for the generic
+  sheet and the C/H/A/I/ZOO icons). Consequence: a file under source control uses our own icon (dedicated or generic
+  sheet), not the user's file icon theme; `fileIcons: fileTheme` or `sourceControl.icons: false` switches the marks off.
+  The git extension's own letter badge/colour decoration of the file is still shown by VS Code (the nodes carry a resourceUri).
+- Not done: marks on projects/filters/solution (roll-up), other VCS (SVN, Perforce), a "pending changes" view.

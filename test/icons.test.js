@@ -102,3 +102,18 @@ test('MSX project type: PROJECT_TYPE of ApplicationSettings.txt, DOS shown as CO
   assert.strictEqual(msxProjectType({ exists: false }), null);
   for (const k of ['rom', 'com', 'bin', 'mdo']) assert.ok(KEYS.includes(`project.${k}`));
 });
+
+test('source control: git statuses map to checked in / changed / new, and the marked icons exist', () => {
+  const { classify, indexChanges, inside, GIT } = require('../src/core/scm');
+  assert.deepStrictEqual([GIT.MODIFIED, GIT.INDEX_MODIFIED, GIT.DELETED, GIT.INDEX_RENAMED, GIT.TYPE_CHANGED, 14].map(classify), ['mod', 'mod', 'mod', 'mod', 'mod', 'mod']);
+  assert.deepStrictEqual([GIT.UNTRACKED, GIT.INDEX_ADDED, GIT.INTENT_TO_ADD].map(classify), ['add', 'add', 'add']);
+  assert.strictEqual(classify(GIT.IGNORED), null);
+  const u = (p) => ({ fsPath: p });
+  const m = indexChanges([[{ uri: u('C:\\r\\A.c'), status: GIT.INDEX_ADDED }], [{ uri: u('C:\\r\\a.C'), status: GIT.MODIFIED }, { uri: u('C:\\r\\b.h'), status: GIT.UNTRACKED }], undefined]);
+  assert.strictEqual(m.get('c:/r/a.c'), 'mod', 'a change beats an addition, case-insensitive, either slash');
+  assert.strictEqual(m.get('c:/r/b.h'), 'add');
+  assert.ok(inside('C:\\r', 'c:/r/sub/a.c') && !inside('C:\\r', 'C:\\r2\\a.c'));
+  for (const base of ['file', 'file.c', 'file.h', 'file.asm', 'file.inc', 'file.zoo']) for (const st of ['in', 'mod', 'add']) {
+    for (const t of ['light', 'dark']) assert.ok(fs.existsSync(path.join(BUILTIN, t, `${base}+${st}.svg`)), `${t}/${base}+${st}.svg`);
+  }
+});

@@ -75,8 +75,14 @@ class Icons {
    * Icon of a file node: our sheet icons for C/H/ASM/INC files ("mixed", the default, and "vs"), the generic sheet
    * for every other file ("vs"), or the user's file icon theme (undefined result, "fileTheme").
    */
-  fileIcon(file) {
+  fileIcon(file, scmStatus) {
     const k = this.fileIcons === 'fileTheme' ? null : fileKey(file);
+    // a source control mark is part of the icon image, so a file under source control gets one of our own icons
+    // (the dedicated one, else the generic sheet) with the mark drawn on it
+    if (scmStatus && this.fileIcons !== 'fileTheme' && this.theme !== 'codicons') {
+      const base = k || 'file';
+      if (this.describe(base).source !== 'override') return this.get(`${base}+${scmStatus}`);
+    }
     if (k) return this.get(k);
     return this.fileIcons === 'vs' ? this.get('file') : vscode.ThemeIcon.File;
   }
@@ -146,7 +152,7 @@ class Icons {
 /** The icon key a tree node uses (for "Set Icon..." on a clicked node). */
 function keyForNode(node) {
   switch (node.kind) {
-    case 'solution': return 'solution';
+    case 'solution': return node.iconKey || 'solution';
     case 'solutionFolder': return 'solutionFolder';
     case 'projectMissing': return 'project.missing';
     case 'actions': return 'buildActions';
