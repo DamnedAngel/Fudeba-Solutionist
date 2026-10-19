@@ -8,6 +8,9 @@ const edit = require('./core/edit');
 const slnEdit = require('./core/slnEdit');
 const { dependencySources, dependents, projectsOf, topoOrder, closure, configLabel } = require('./core/model');
 const { plan } = require('./core/build');
+const { msxProjectType } = require('./core/msx');
+const { PropertiesPanel } = require('./propertiesPanel');
+const { AboutPanel } = require('./aboutPanel');
 const { discoverTemplates, defaultTemplateRoots } = require('./core/vstemplate');
 const { createFromTemplate, validateName } = require('./core/newProject');
 const { setSlnDependencies } = require('./core/sln');
@@ -198,6 +201,18 @@ function register(context, ctl, tree, runner, view) {
     const e = entryOf(node);
     if (!e || !node.depId) return;
     await applyDependencies(e.sln.id, e.deps.filter((d) => d !== node.depId));
+  });
+
+  reg('slnExplorer.about', () => AboutPanel.open(context, ctl));
+
+  // ---- MSX project settings dialog ----------------------------------------------------------------
+
+  reg('slnExplorer.projectProperties', async (node) => {
+    const e = await pickProject(node, 'Project to configure');
+    if (!e) return;
+    const t = e.data.exists && e.data.kind === 'makefile' ? msxProjectType(e.data) : null;
+    if (!t) { warn(`"${e.sln.name}" is not an MSX project (no Config\\ApplicationSettings.txt with a PROJECT_TYPE of ROM, DOS, BIN or MDO).`); return; }
+    PropertiesPanel.open(context, ctl, e.sln.id, t.label);
   });
 
   // ---- remove a project from the solution --------------------------------------------------------

@@ -136,12 +136,14 @@ class SolutionTree {
     const startup = ctl.startupId === p.id;
     const msxType = pd.exists && pd.kind === 'makefile' ? msxProjectType(pd) : null;
     const iconKey = this.projectIconKey(pd);
-    const node = { kind: !pd.exists ? 'projectMissing' : startup ? 'project.startup' : 'project', id: `prj:${p.id}`, projectId: p.id, parent, iconKey };
+    const node = { kind: !pd.exists ? 'projectMissing' : startup ? 'project.startup' : 'project', id: `prj:${p.id}`, projectId: p.id, parent, iconKey, msxType: msxType ? msxType.label : null };
     node.children = () => this.projectChildren(node, e);
     const flags = [];
     if (startup) flags.push('startup');
     if (!e.builds) flags.push(pd.exists ? 'not built in this configuration' : 'missing');
     return this.make(node, p.name, vscode.TreeItemCollapsibleState.Collapsed, {
+      // MSX projects get a ".msx" suffix: the settings button of the row is shown only for them
+      contextValue: msxType ? `${node.kind}.msx` : node.kind,
       description: flags.join(' · ') || undefined,
       iconPath: this.ctl.icons.get(iconKey, { color: startup ? new vscode.ThemeColor('charts.green') : undefined }),
       tooltip: new vscode.MarkdownString(

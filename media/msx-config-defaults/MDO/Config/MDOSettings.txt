@@ -1,0 +1,44 @@
+;----------------------------------------------------------
+;	MDOSettings.txt - by Danilo Angelo, 2020-2026
+;
+;	MDO (MSX-DOS Overlay) features general configuration.
+;----------------------------------------------------------
+
+;----------------------------------------------------------
+;	MDO hierarchy
+MDO_APPLICATION_PROJECT_PATH	../MSX-DOS Application
+MDO_PARENT_PROJECT_PATH			../MSX-DOS Application
+;	MDO_PREVIOUS_PROJECT_PATH lets this MDO snap after any already-loaded
+;	module (not only its parent) via FILESTART PREVIOUS_AFTERHEAP below.
+;MDO_PREVIOUS_PROJECT_PATH		../SomeOtherMDO
+;	MDO_EXTRA_INTERFACE pulls in an ancestor's symbols
+;MDO_EXTRA_INTERFACE			../TheRootApplication
+
+;----------------------------------------------------------
+;	MDO settings
+;	FILESTART: PARENT_AFTERHEAP, PREVIOUS_AFTERHEAP, or a literal address.
+FILESTART						PARENT_AFTERHEAP
+
+;----------------------------------------------------------
+;	MDO name
+MDO_NAME						OVERLAY_ONE
+
+;----------------------------------------------------------
+;	MDO hooks
+;	Syntax: MDO_HOOK <C return type>|<hookname>|<C signature>
+;MDO_HOOK						void|voidmdoDoSomething|(void)
+;MDO_HOOK						unsigned char|mdoDoSomethingElse|(int)
+
+;----------------------------------------------------------
+;	MDO hook implementation
+MDO_HOOK_IMPLEMENTATION			mdoChildHello		_hello
+MDO_HOOK_IMPLEMENTATION			mdoChildGoodbye		_goodbye
+
+;----------------------------------------------------------
+;	Children MDOs
+;	Syntax: MDO_CHILD <mdoname> <filename> <extension>
+;	Notes:
+;	  - if filename is less than 8 characters, the rest must be filled in by spaces.
+;	  - if extension is less than 3 characters, the rest must be filled in by spaces.
+;	  - the load address is not configured here; each MDO embeds its own (see its FILESTART).
+;MDO_CHILD						OVERLAY_ONE ^/MSXOVL1 / MDO

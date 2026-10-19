@@ -171,3 +171,49 @@ Separate from Alchemia Z (its own folder, its own repo-to-be). Nothing here is c
   sheet), not the user's file icon theme; `fileIcons: fileTheme` or `sourceControl.icons: false` switches the marks off.
   The git extension's own letter badge/colour decoration of the file is still shown by VS Code (the nodes carry a resourceUri).
 - Not done: marks on projects/filters/solution (roll-up), other VCS (SVN, Perforce), a "pending changes" view.
+
+## MSX project settings dialog (user request: Project-Properties-like dialog for the Config files of the templates)
+
+- A gear button (inline, right end of the row; also in the context menu as "MSX Project Settings...") appears on MSX
+  projects only (contextValue `project.msx`; a project with no recognised PROJECT_TYPE has no button). VS Code shows
+  inline buttons while the row is hovered or selected; there is no always-visible button in a tree.
+- The dialog is a webview (`media/properties`, host side `src/propertiesPanel.js`). Left index = one entry per
+  configuration file, grouped General / Build configuration / Sources / Linking (TargetConfig_Debug and _Release are
+  separate entries, as the files are). Right = the page of that file. Below = an explanation pane (the help of the
+  setting under the mouse or focus). OK / Cancel / Apply as in Visual Studio; Apply and OK are disabled while the
+  context checks report errors (warnings never block).
+- The dialog is specific to the project type (ROM, COM, BIN, MDO): `src/core/msxconfig/schema.js` says which pages and
+  which settings apply to each type, with an explanation of every option written from the template comments and from
+  Make\make.py (what the build does with the value). MDOSettings.txt exists only for COM and MDO projects.
+- What the files hold (from the templates + make.py): ApplicationSettings.txt (project type, crt0 features per type,
+  ZOO, SDCCCALL, ROM/BIN settings, CALL statements, devices, BASIC USR table, code/data/heap layout, any other KEY VALUE =
+  a macro), MDOSettings.txt (hierarchy, load address, name, hooks, hook implementations, children), TargetConfig_<profile>.txt
+  (.BUILD, .APPLICATION macros, .FILESYSTEM), ApplicationSources/LibrarySources/Libraries/IncludeDirectories (entry lists
+  where a ';' line is a switched-off entry), Symbols.txt (regexes), BuildEvents.txt (five commands).
+- Files are edited by line (`src/core/msxconfig/textfile.js`): only the changed value, a ';' that switches a line on or off,
+  or a new line is touched; comments, spacing, CRLF and BOM stay. All 38 real template files round-trip byte for byte (tested).
+  Optional settings (";CODE_LOC ...") show as "automatic" until ticked.
+- Context checks (`src/core/msxconfig/validate.js`): numbers and names; settings against each other (STACK_HIMEM with
+  RETURN_TO_BASIC, ROM_SIZE vs FILESTART, CALL/DEVICE expansion vs their lists, MDO_SUPPORT); one file against another
+  (ZOO_SUPPORT vs ZOO_PATH in each TargetConfig, .zml sources vs ZOO_SUPPORT, hook implementations vs the hooks the parent
+  declares - read from the parent's MDOSettings.txt); references on disk (sources, libraries, folders, parent project);
+  the template rules (crt0 stays first, one of each .c/.s pair); regexes of Symbols.txt; unbalanced quotes in build events.
+  Errors are what the build cannot work with (make.py stops or fails); warnings are suspicious. The unmodified templates
+  produce no error and no warning (tested with the existence check stubbed).
+- **Missing files** (user: "missing files should be created"): every file the template of the project's type defines gets its
+  page, even when the project lacks it (Debug and Release always). The page is filled from the template: first the
+  user's installed Visual Studio template of that type (so it is the current version), else the copy of the 00.07.00
+  templates that ships in `media/msx-config-defaults`. The index marks it "(not created yet)" and the page offers
+  "Create the file now". The file is also created when a missing page is edited and Apply/OK is pressed; an untouched missing
+  page is never created and is not context-checked. New files are added to the project (`<Text Include="Config\X.txt">`)
+  in the filter the other Config files use ("Project Config" in the templates).
+- Not done: changing PROJECT_TYPE (read-only), editing the .vcxproj properties.
+
+## About box (user request; "explicitly say it was created with Claude's aid")
+
+- Command `slnExplorer.about` ("About Fudeba Solutionist"; also in the "..." menu of the view). `src/aboutPanel.js`: name, version
+  (from package.json), a boxed statement "Created with Claude's aid" (designed and written by Danilo Angelo with the aid of
+  Claude, an AI assistant made by Anthropic, via Claude Code), what it does, credits and notices (Aleste sprite belongs to its
+  owners, SDCC/ZOO, MSX trademark, "Fudeba" slang), diagnostics for bug reports (Copy diagnostics, Open settings, Report an
+  issue = GitHub issues of `repository` with the diagnostics prefilled). The author line "Danilo Angelo" comes from the
+  template headers ("by Danilo Angelo"); change it in `src/aboutPanel.js` if wanted.

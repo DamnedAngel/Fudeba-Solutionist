@@ -1,8 +1,15 @@
 # Fudeba Solutionist
 
-A Solution Explorer for VS Code.
+A Visual Studio-style Solution Explorer for VS Code. It is meant to support **generic Microsoft Visual Studio solutions**
+(`.sln` / `.slnx`), but it has **specialized MSX features**, and it works in pair with the author's own
+[MSX templates for Visual Studio](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio) and [ZOO framework](https://github.com/DamnedAngel/Zoo).
+Windows and Linux.
 
-A Visual Studio-style Solution Explorer for `.sln` / `.slnx` solutions. Windows and Linux.
+- **Generic**: any `.sln` / `.slnx` solution: projects, filters, per-project build actions, dependencies, new projects
+  from Visual Studio project templates, source control marks.
+- **MSX**: project icons by type (ROM, COM, BIN, MDO), an MSX settings dialog for the Config files of the templates, build
+  output and error explanations for SDCC, SDAS and ZOO.
+
 
 - **Projects** under the solution (solution folders too), each with its own **filters** (`.vcxproj.filters`
   virtual folders) or its folder structure; files open on click; drag a file onto a filter to move it.
@@ -39,4 +46,4 @@ npm test               # parsers, editing, build planning, templates (node:test)
 npm run test:vscode    # drives the real commands inside a real VS Code
 npm run package
 ```
-Design decisions and open topics: `DECISIONS.md`.
+

@@ -363,6 +363,105 @@ suite('Solution Explorer', function () {
     assert.ok(e.builds);
   });
 
+  test('About box: version, the Claude credit, notices and diagnostics', async function () {
+    await vscode.commands.executeCommand('slnExplorer.about');
+    const about = api.about.current;
+    assert.ok(about, 'the About panel is open');
+    const html = about.panel.webview.html;
+    const pkg = require('../../package.json');
+    assert.ok(html.includes(`Version ${pkg.version}`) && html.includes(pkg.displayName));
+    assert.match(html, /id="made-with-claude">[\s\S]*?Author:[\s\S]*?<\/b>[^<]*\baid\b[^<]*Anthropic Claude/, 'the credit box names the author and says Claude aided');
+    assert.match(html, /Aleste/);
+    assert.match(html, /generic Microsoft Visual Studio solutions/);
+    assert.match(html, /<b>specialized MSX features<\/b>/);
+    assert.ok(html.includes('https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio') && html.includes('https://github.com/DamnedAngel/Zoo'), 'links to the templates and to ZOO');
+    const d = about.diagnostics();
+    assert.match(d, new RegExp(`${pkg.displayName} ${pkg.version.replace(/\./g, '\\.')}`));
+    assert.match(d, /VS Code \d+\.\d+/);
+    assert.match(d, /Solution: .*\.sln/);
+    await about.onMessage({ type: 'copy' });
+    assert.strictEqual(await vscode.env.clipboard.readText(), d, 'Copy diagnostics puts the text on the clipboard');
+    // opening it again reuses the panel
+    await vscode.commands.executeCommand('slnExplorer.about');
+    assert.strictEqual(api.about.current, about);
+    about.panel.dispose();
+  });
+
+  test('MSX project settings dialog: opens for MSX projects only, shows the pages of its type, checks and saves', async function () {
+    this.timeout(30000);
+    const cfgDir = path.join(WS, 'Game', 'Config');
+    const had = fs.existsSync(cfgDir);
+    const backup = had ? fs.readdirSync(cfgDir).map((f) => [f, fs.readFileSync(path.join(cfgDir, f))]) : [];
+    fs.mkdirSync(cfgDir, { recursive: true });
+    for (const f of fs.readdirSync(path.join(__dirname, '..', 'fixtures', 'msx-config', 'ROM', 'Config'))) fs.copyFileSync(path.join(__dirname, '..', 'fixtures', 'msx-config', 'ROM', 'Config', f), path.join(cfgDir, f));
+    try {
+      api.controller.reload();
+      const game = await projectNode('Game');
+      assert.strictEqual(game.item.contextValue, 'project.msx', 'the settings button of the row is for MSX projects');
+      const other = (await kids(await solutionRoot())).find((n) => label(n) === 'Overlay1');
+      assert.ok(other && !/\.msx$/.test(other.item.contextValue), 'a non-MSX project has no settings button');
+
+      await vscode.commands.executeCommand('slnExplorer.projectProperties', game);
+      const panel = api.properties.panels.get(game.projectId);
+      assert.ok(panel, 'the dialog is open');
+      assert.strictEqual(panel.type, 'ROM');
+      await panel.onMessage({ type: 'ready' });
+      const init = panel.sent.find((m) => m.type === 'init');
+      const files = init.state.pages.map((p) => p.file);
+      assert.deepStrictEqual(files, ['ApplicationSettings.txt', 'TargetConfig_Debug.txt', 'TargetConfig_Release.txt', 'ApplicationSources.txt', 'LibrarySources.txt', 'Libraries.txt', 'IncludeDirectories.txt', 'Symbols.txt', 'BuildEvents.txt'], 'one page per file, specific to a ROM project');
+      assert.deepStrictEqual(init.issues.filter((i) => i.severity === 'error'), [], 'the template files have no errors');
+      assert.ok(init.issues.some((i) => /was not found/.test(i.message)), 'the sources the template lists are not in this test project: reported as not found, as warnings');
+
+      // the context check runs while editing
+      const pages = JSON.parse(JSON.stringify(init.state.pages));
+      const field = (k) => pages[0].groups.flatMap((g) => g.fields).find((f) => f.key === k);
+      field('STACK_HIMEM').value = '_ON';
+      await panel.onMessage({ type: 'validate', pages });
+      assert.ok(panel.sent.filter((m) => m.type === 'issues').pop().issues.some((i) => i.severity === 'error' && /RETURN_TO_BASIC/.test(i.message)));
+      // ... and an error stops the save
+      await panel.onMessage({ type: 'save', pages, close: false });
+      assert.ok(panel.sent.some((m) => m.type === 'saveFailed'));
+      assert.match(fs.readFileSync(path.join(cfgDir, 'ApplicationSettings.txt'), 'utf8'), /^STACK_HIMEM\s+_OFF/m, 'nothing was written');
+
+      // a valid change is saved, only in the file it belongs to
+      field('STACK_HIMEM').value = '_OFF';
+      field('ROM_SIZE').value = '32k';
+      await panel.onMessage({ type: 'save', pages, close: false });
+      assert.match(fs.readFileSync(path.join(cfgDir, 'ApplicationSettings.txt'), 'utf8'), /^ROM_SIZE\s+32k/m);
+      const after = panel.sent.filter((m) => m.type === 'init').pop();
+      assert.strictEqual(after.state.pages[0].groups.flatMap((g) => g.fields).find((f) => f.key === 'ROM_SIZE').value, '32k', 'the dialog is given the saved state');
+      panel.panel.dispose();
+
+      // a file the template defines but the project lacks (neither on disk nor in the project): shown, created on request
+      const edit = require('../../src/core/edit');
+      const vcx = path.join(WS, 'Game', 'Game.vcxproj');
+      fs.rmSync(path.join(cfgDir, 'Symbols.txt'));
+      edit.removeItem(vcx, 'Config\\Symbols.txt');
+      await until(() => !api.properties.panels.has(game.projectId), 5000, 'dialog closed');
+      api.controller.reload();
+      await vscode.commands.executeCommand('slnExplorer.projectProperties', await projectNode('Game'));
+      const p2 = api.properties.panels.get(game.projectId);
+      await p2.onMessage({ type: 'ready' });
+      const init2 = p2.sent.filter((m) => m.type === 'init').pop();
+      const sym = init2.state.pages.find((p) => p.file === 'Symbols.txt');
+      assert.ok(sym && sym.missing, 'the missing file has its page, marked as missing');
+      assert.ok(sym.items.length >= 1, 'filled with the template\'s entries');
+      const pages2 = JSON.parse(JSON.stringify(init2.state.pages));
+      await p2.onMessage({ type: 'save', pages: pages2, close: false });
+      assert.ok(!fs.existsSync(path.join(cfgDir, 'Symbols.txt')), 'an untouched missing file is not created by Apply');
+      await p2.onMessage({ type: 'save', pages: pages2, close: false, create: ['Symbols.txt'] });
+      assert.strictEqual(fs.readFileSync(path.join(cfgDir, 'Symbols.txt'), 'utf8'), fs.readFileSync(path.join(__dirname, '..', 'fixtures', 'msx-config', 'ROM', 'Config', 'Symbols.txt'), 'utf8'), 'created as the template has it');
+      assert.match(fs.readFileSync(vcx, 'utf8'), /<Text Include="Config\\Symbols\.txt"/, 'added to the project');
+      assert.match(fs.readFileSync(`${vcx}.filters`, 'utf8'), /Config\\Symbols\.txt">\s*<Filter>Project Config<\/Filter>/, 'in the Config filter of the project');
+      assert.ok(!p2.sent.filter((m) => m.type === 'init').pop().state.pages.some((p) => p.missing && p.file === 'Symbols.txt'), 'and no longer missing');
+      p2.panel.dispose();
+    } finally {
+      fs.rmSync(cfgDir, { recursive: true, force: true });
+      if (had) { fs.mkdirSync(cfgDir, { recursive: true }); for (const [f, b] of backup) fs.writeFileSync(path.join(cfgDir, f), b); }
+      api.controller.reload();
+    }
+  });
+
   test('source control: files show checked in / changed / new marks from the git extension', async function () {
     this.timeout(60000);
     const gitExt = vscode.extensions.getExtension('vscode.git');

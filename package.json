@@ -2,7 +2,7 @@
   "name": "sln-explorer",
   "displayName": "Fudeba Solutionist",
   "repository": { "type": "git", "url": "https://github.com/DamnedAngel/Fudeba-Solutionist.git" },
-  "description": "A Visual Studio-style Solution Explorer: .sln/.slnx solutions, projects with filters, per-project build actions, project dependencies, and new projects from Visual Studio project templates.",
+  "description": "A Visual Studio-style Solution Explorer for generic Microsoft Visual Studio solutions (.sln/.slnx), with specialized features for MSX projects. It works in pair with the MSX templates for Visual Studio and the ZOO framework.",
   "version": "0.0.1",
   "publisher": "damnedangel",
   "private": true,
@@ -164,6 +164,18 @@
         "category": "Solution Explorer"
       },
       {
+        "command": "slnExplorer.about",
+        "title": "About Fudeba Solutionist",
+        "category": "Solution Explorer",
+        "icon": "$(info)"
+      },
+      {
+        "command": "slnExplorer.projectProperties",
+        "title": "MSX Project Settings...",
+        "category": "Solution Explorer",
+        "icon": "$(settings-gear)"
+      },
+      {
         "command": "slnExplorer.removeDependency",
         "title": "Remove Dependency",
         "category": "Solution Explorer"
@@ -285,6 +297,11 @@
     "menus": {
       "view/title": [
         {
+          "command": "slnExplorer.about",
+          "when": "view == slnExplorer.tree",
+          "group": "9_about@1"
+        },
+        {
           "command": "slnExplorer.buildSolution",
           "when": "view == slnExplorer.tree && slnExplorer.hasSolution && !slnExplorer.building",
           "group": "navigation@1"
@@ -400,6 +417,16 @@
           "command": "slnExplorer.removeProject",
           "when": "viewItem =~ /^project/",
           "group": "9_remove@1"
+        },
+        {
+          "command": "slnExplorer.projectProperties",
+          "when": "viewItem =~ /\\.msx$/",
+          "group": "inline@9"
+        },
+        {
+          "command": "slnExplorer.projectProperties",
+          "when": "viewItem =~ /\\.msx$/",
+          "group": "2_project@0"
         },
         {
           "command": "slnExplorer.openProjectFile",

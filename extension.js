@@ -6,6 +6,8 @@ const { Runner } = require('./src/runner');
 const { Problems } = require('./src/problems');
 const { Icons } = require('./src/icons');
 const { Scm } = require('./src/scm');
+const { PropertiesPanel } = require('./src/propertiesPanel');
+const { AboutPanel } = require('./src/aboutPanel');
 const { register } = require('./src/commands');
 
 /** @returns the API used by the tests and by other extensions */
@@ -28,7 +30,7 @@ async function activate(context) {
   register(context, ctl, tree, runner, view);
   await vscode.commands.executeCommand('setContext', 'slnExplorer.building', false);
   await ctl.openConfigured();
-  return { controller: ctl, tree, runner, problems };
+  return { controller: ctl, tree, runner, problems, properties: PropertiesPanel, about: AboutPanel };
 }
 
 function deactivate() {}
