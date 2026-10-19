@@ -1,4 +1,6 @@
-# Solution Explorer for VS Code
+# Fudeba Solutionist
+
+A Solution Explorer for VS Code.
 
 A Visual Studio-style Solution Explorer for `.sln` / `.slnx` solutions. Windows and Linux.
 

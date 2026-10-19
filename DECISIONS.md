@@ -1,4 +1,4 @@
-# SlnExplorer - decision log and open topics
+# Fudeba Solutionist - decision log and open topics
 
 Separate from Alchemia Z (its own folder, its own repo-to-be). Nothing here is committed.
 

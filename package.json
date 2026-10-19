@@ -1,6 +1,7 @@
 {
   "name": "sln-explorer",
-  "displayName": "Solution Explorer",
+  "displayName": "Fudeba Solutionist",
+  "repository": { "type": "git", "url": "https://github.com/DamnedAngel/Fudeba-Solutionist.git" },
   "description": "A Visual Studio-style Solution Explorer: .sln/.slnx solutions, projects with filters, per-project build actions, project dependencies, and new projects from Visual Studio project templates.",
   "version": "0.0.1",
   "publisher": "damnedangel",
@@ -48,7 +49,7 @@
       "activitybar": [
         {
           "id": "slnExplorer",
-          "title": "Solution Explorer",
+          "title": "Fudeba Solutionist",
           "icon": "media/sln.svg"
         }
       ]
@@ -57,9 +58,9 @@
       "slnExplorer": [
         {
           "id": "slnExplorer.tree",
-          "name": "Solution",
+          "name": "Fudeba Solutionist",
           "icon": "media/sln.svg",
-          "contextualTitle": "Solution Explorer"
+          "contextualTitle": "Fudeba Solutionist"
         }
       ]
     },
