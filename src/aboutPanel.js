@@ -98,7 +98,7 @@ class AboutPanel {
 <div class="ai" id="made-with-claude"><b>Author: Damned Angel</b>, with aid from Anthropic Claude.</div>
 
 <p>It is meant to support <b>generic Microsoft Visual Studio solutions</b>, but it has <b>specialized MSX features</b>, and it works in pair with the author's
-<a href="https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio">MSX templates for Visual Studio</a> and with the author's <a href="https://github.com/DamnedAngel/Zoo">ZOO framework</a>.</p>
+<a href="https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio">MSX templates for Visual Studio</a> and with the author's <a href="https://github.com/DamnedAngel/Zoo">ZOO framework</a> (ZOO is currently a private repository; it will eventually be made public).</p>
 
 <h2>What it does</h2>
 <ul>

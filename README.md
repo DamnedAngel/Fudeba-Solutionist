@@ -5,6 +5,8 @@ A Visual Studio-style Solution Explorer for VS Code. It is meant to support **ge
 [MSX templates for Visual Studio](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio) and [ZOO framework](https://github.com/DamnedAngel/Zoo).
 Windows and Linux.
 
+> **Note:** the ZOO repository is currently private; it will eventually be made public.
+
 - **Generic**: any `.sln` / `.slnx` solution: projects, filters, per-project build actions, dependencies, new projects
   from Visual Studio project templates, source control marks.
 - **MSX**: project icons by type (ROM, COM, BIN, MDO), an MSX settings dialog for the Config files of the templates, build
