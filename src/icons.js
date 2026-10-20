@@ -87,6 +87,12 @@ class Icons {
     return this.fileIcons === 'vs' ? this.get('file') : vscode.ThemeIcon.File;
   }
 
+  /** Icon of a solution or project row, with the source control mark of the files it is kept in (only on our own built-in icons). */
+  markedIcon(key, scmStatus, opt = {}) {
+    if (scmStatus && this.theme !== 'codicons' && this.describe(key).source === 'builtin') return this.get(`${key}+${scmStatus}`, opt);
+    return this.get(key, opt);
+  }
+
   /**
    * @param {string} key  one of KEYS
    * @param {{color?:vscode.ThemeColor}} [opt]  colour for codicons only

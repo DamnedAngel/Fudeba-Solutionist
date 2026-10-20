@@ -259,10 +259,16 @@ suite('Solution Explorer', function () {
     await api.tree.handleDrop(await top('Inner'), dt0);
     await until(async () => (await kids(await top('Inner'))).some((f) => label(f) === 'mdo.c'), 5000, 'file in Inner');
 
-    // Inner into Outer
+    // Inner into Outer; the destination opens to show what arrived
+    const revealed = [];
+    const realReveal = api.tree.view.reveal.bind(api.tree.view);
+    api.tree.view.reveal = (n, o) => { revealed.push([n.id, o]); return realReveal(n, o); };
     const dt = new vscode.DataTransfer();
     api.tree.handleDrag([await top('Inner')], dt);
-    await api.tree.handleDrop(await top('Outer'), dt);
+    const outerNode = await top('Outer');
+    try { await api.tree.handleDrop(outerNode, dt); } finally { api.tree.view.reveal = realReveal; }
+    assert.deepStrictEqual(revealed.map((r) => r[0]), [outerNode.id], 'the destination was revealed');
+    assert.strictEqual(revealed[0][1].expand, true, 'and expanded');
     await until(async () => !(await top('Inner')), 5000, 'Inner left the project root');
     const outer = await top('Outer');
     const inner = (await kids(outer)).find((n) => label(n) === 'Inner');
@@ -630,6 +636,43 @@ suite('Solution Explorer', function () {
     }
   });
 
+  test('another folder / another solution: the old solution is closed, and a solution from outside moves the window to its folder', async function () {
+    this.timeout(30000);
+    const ctl = api.controller;
+    const home = ctl.solutionFile;
+    assert.ok(home && ctl.inWorkspace(home), 'the test workspace solution is open');
+    const ext = fs.mkdtempSync(path.join(require('os').tmpdir(), 'fudeba-ext-'));
+    const extSln = path.join(ext, 'Elsewhere.sln');
+    fs.writeFileSync(extSln, 'Microsoft Visual Studio Solution File, Format Version 12.00\r\nGlobal\r\nEndGlobal\r\n');
+    const realExec = vscode.commands.executeCommand;
+    const calls = [];
+    try {
+      // a solution that is not in an open folder is closed when the folders change; the folder's own solution is opened
+      await ctl.open(extSln);
+      assert.strictEqual(ctl.solutionFile, extSln);
+      assert.ok(!ctl.inWorkspace(extSln));
+      await ctl.syncWithWorkspace();
+      assert.strictEqual(ctl.solutionFile, home, 'back on the solution of the open folder');
+      await ctl.syncWithWorkspace();
+      assert.strictEqual(ctl.solutionFile, home, 'a solution of the open folder is left alone');
+
+      // opening a solution from another folder: the window is moved to that folder (here: the call is only observed)
+      vscode.commands.executeCommand = (c, ...a) => { if (c === 'vscode.openFolder') { calls.push([c, ...a]); return Promise.resolve(); } return realExec(c, ...a); };
+      const restore = answer({ showQuickPick: async (items) => items.find((i) => !i.file), showOpenDialog: async () => [vscode.Uri.file(extSln)] });
+      try { await vscode.commands.executeCommand('fudebaSolutionist.openSolution'); } finally { restore(); vscode.commands.executeCommand = realExec; }
+      assert.strictEqual(calls.length, 1, 'the window is asked to open the solution\'s folder');
+      assert.strictEqual(calls[0][1].fsPath.toLowerCase(), ext.toLowerCase());
+      const parked = api.context.globalState.get(api.reveal.KEY);
+      assert.strictEqual(parked && parked.file.toLowerCase(), extSln.toLowerCase(), 'the choice waits for the restarted extension');
+      assert.strictEqual(ctl.solutionFile, home, 'nothing is opened in this window: it is being replaced');
+    } finally {
+      vscode.commands.executeCommand = realExec;
+      await api.context.globalState.update(api.reveal.KEY, undefined);
+      fs.rmSync(ext, { recursive: true, force: true });
+      await ctl.open(home);
+    }
+  });
+
   test('source control: files show checked in / changed / new marks from the git extension', async function () {
     this.timeout(60000);
     const gitExt = vscode.extensions.getExtension('vscode.git');
@@ -659,6 +702,23 @@ suite('Solution Explorer', function () {
       git('checkout', '--', 'Game/mdo.c');
       await repo.status();
       await until(async () => { api.tree.refresh(); return /file\.c\+in\.svg$/.test((await iconOf()).icon); }, 20000, 'checked in again');
+      // the project row shows the state of its project file and its filters file; the solution row, that of the .sln
+      const rowIcons = async () => {
+        api.tree.refresh();
+        const g = await projectNode('Game');
+        const s = (await kids(undefined)).find((n) => n.kind === 'solution');
+        return { project: g.item.iconPath.dark.fsPath, solution: s.item.iconPath.dark.fsPath };
+      };
+      await until(async () => { const x = await rowIcons(); return /project\.[a-z]+\+in\.svg$/.test(x.project) && /solution(\.msx)?\+in\.svg$/.test(x.solution); }, 20000, 'project and solution checked in');
+      // a filter is created: only the .filters file changes, and the project row notices; the solution row does not
+      const mk = answer({ showInputBox: async () => 'Marked' });
+      try { await vscode.commands.executeCommand('fudebaSolutionist.newFilter', await projectNode('Game')); } finally { mk(); }
+      await repo.status();
+      let x = await until(async () => { const y = await rowIcons(); return /project\.[a-z]+\+mod\.svg$/.test(y.project) ? y : null; }, 20000, 'project marked as changed');
+      assert.match(x.solution, /solution(\.msx)?\+in\.svg$/, 'the solution file did not change');
+      git('checkout', '--', 'Game/Game.vcxproj.filters');
+      await repo.status();
+      await until(async () => /project\.[a-z]+\+in\.svg$/.test((await rowIcons()).project), 20000, 'project checked in again');
       // switched off by the setting: our plain icons again
       await vscode.workspace.getConfiguration('fudebaSolutionist').update('sourceControl.icons', false, vscode.ConfigurationTarget.Workspace);
       await until(async () => /file\.c\.svg$/.test((await iconOf()).icon), 10000, 'marks switched off');

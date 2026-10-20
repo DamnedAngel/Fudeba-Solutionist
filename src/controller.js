@@ -28,6 +28,8 @@ class Controller {
     const w = vscode.workspace.createFileSystemWatcher(WATCH_GLOB);
     const poke = (uri) => { if (!this._selfWrite && !/[\\/](node_modules|\.git)[\\/]/.test(uri.fsPath)) this.scheduleReload(); };
     context.subscriptions.push(w, w.onDidChange(poke), w.onDidCreate(poke), w.onDidDelete(poke));
+    // another folder was opened, or the one holding the solution was closed: the old solution goes, the new folder's is opened
+    context.subscriptions.push(vscode.workspace.onDidChangeWorkspaceFolders(() => this.syncWithWorkspace()));
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration((e) => { if (e.affectsConfiguration('fudebaSolutionist.solution')) this.openConfigured(); }));
   }
 
@@ -41,17 +43,35 @@ class Controller {
     return uris.map((u) => u.fsPath).sort();
   }
 
+  /** is the file inside one of the open folders? */
+  inWorkspace(file) {
+    return (vscode.workspace.workspaceFolders || []).some((f) => {
+      const rel = path.relative(f.uri.fsPath, file);
+      return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
+    });
+  }
+
+  /** The folders changed: a solution that is no longer in any open folder is closed, and the folders' own solution is opened. */
+  async syncWithWorkspace() {
+    if (this.solutionFile && this.inWorkspace(this.solutionFile)) return;
+    if (this.solutionFile) await this.open(null);
+    await this.openConfigured();
+  }
+
   async openConfigured() {
     const cfg = vscode.workspace.getConfiguration('fudebaSolutionist').get('solution');
     let file = null;
-    if (cfg) {
+    // a solution opened from another folder: the window was reopened on its folder and the request waits here
+    const parked = this.context.globalState.get(require('./reveal').KEY);
+    if (parked && parked.file && fs.existsSync(parked.file) && this.inWorkspace(parked.file)) file = parked.file;
+    if (!file && cfg) {
       const root = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0].uri.fsPath;
       const abs = path.isAbsolute(cfg) ? cfg : root && path.join(root, cfg);
       if (abs && fs.existsSync(abs)) file = abs;
     }
     if (!file) {
       const remembered = this.context.workspaceState.get(KEY_SOLUTION);
-      if (remembered && fs.existsSync(remembered)) file = remembered;
+      if (remembered && fs.existsSync(remembered) && this.inWorkspace(remembered)) file = remembered; // one from a folder that is not open any more stays closed
     }
     if (!file) {
       const found = await this.findSolutions();

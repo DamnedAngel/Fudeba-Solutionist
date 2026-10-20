@@ -23,6 +23,9 @@ function classify(code) {
 /** When a file has several entries (staged and unstaged), a change beats an addition. */
 const merge = (a, b) => (a === 'mod' || b === 'mod' ? 'mod' : a || b);
 
+/** One mark for several files that make up one thing (a project is its project file and its filters file): a change beats an addition beats checked in. */
+const combine = (list) => list.reduce((acc, s) => (s === 'mod' || acc === 'mod' ? 'mod' : s === 'add' || acc === 'add' ? 'add' : s || acc), null);
+
 const key = (p) => p.replace(/\\/g, '/').toLowerCase();
 
 /** Index of changes of one repository: normalised path -> 'mod' | 'add'. */
@@ -43,4 +46,4 @@ const inside = (root, file) => {
   return f === r || f.startsWith(`${r}/`);
 };
 
-module.exports = { GIT, classify, merge, indexChanges, inside, key };
+module.exports = { GIT, classify, merge, combine, indexChanges, inside, key };

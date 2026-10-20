@@ -115,6 +115,13 @@ function register(context, ctl, tree, runner, view) {
       if (!u) return;
       file = u[0].fsPath;
     }
+    if (!ctl.inWorkspace(file)) {
+      // a solution from another folder: the window moves to that folder (the previous folder and its solution are closed)
+      // and the extension, restarted there, opens this solution
+      await reveal.schedule(context, file);
+      await vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(path.dirname(file)));
+      return;
+    }
     await ctl.open(file);
   });
 

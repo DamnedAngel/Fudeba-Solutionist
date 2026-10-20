@@ -75,6 +75,15 @@ const FILE_KEYS = ['file', 'file.c', 'file.h', 'file.asm', 'file.inc', 'file.zoo
 for (const base of FILE_KEYS) for (const [st, mark] of Object.entries(MARKS)) ICONS[`${base}+${st}`] = (p) => ICONS[base](p) + mark();
 
 const GROW = 1.15;
+// Solution and project rows carry the status of the files they are kept in (.sln, .vcxproj + .filters): the same marks,
+// drawn after the icon was scaled to the box, so they stay the size and place they have on the files.
+const NODE_KEYS = ['solution', 'solution.msx', 'project.cpp', 'project.makefile', 'project.rom', 'project.com', 'project.bin', 'project.mdo', 'project.dotnet', 'project.shared', 'project.unknown'];
+const FULL_KEYS = new Set(['solution.msx', 'project.rom', 'project.bin', 'project.com', 'project.mdo']);
+for (const base of NODE_KEYS) {
+  for (const [st, mark] of Object.entries(MARKS)) {
+    ICONS[`${base}+${st}`] = (p) => svg((FULL_KEYS.has(base) ? ICONS[base](p) : `<g transform="translate(8 8) scale(${GROW}) translate(-8 -8)">${ICONS[base](p)}</g>`) + mark());
+  }
+}
 const FULL = new Set(['solution.msx', 'project.rom', 'project.bin', 'project.com', 'project.mdo', 'file', 'file.c', 'file.h', 'file.asm', 'file.inc', 'file.zoo', 'file.missing']);
 const out = path.join(__dirname, '..', 'media', 'icons');
 let n = 0;

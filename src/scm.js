@@ -1,6 +1,6 @@
 'use strict';
 const vscode = require('vscode');
-const { indexChanges, inside, key } = require('./core/scm');
+const { indexChanges, inside, key, combine } = require('./core/scm');
 
 /**
  * Source control status of the files in the tree, taken from VS Code's built-in git extension (any git
@@ -65,6 +65,9 @@ class Scm {
     return null;
   }
 
+  /** the status of a thing kept in several files; files that do not exist are not counted */
+  statusOf(files) { return combine(files.map((f) => status0(this, f))); }
+
   ask(repo, file, k) {
     if (typeof repo.checkIgnore !== 'function') { this.ignored.set(k, false); return; }
     let q = this.queue.get(repo);
@@ -91,5 +94,8 @@ class Scm {
     this._changed.fire();
   }
 }
+
+const fs = require('fs');
+const status0 = (scm, f) => (fs.existsSync(f) ? scm.status(f) : null);
 
 module.exports = { Scm };

@@ -23,6 +23,7 @@ async function activate(context) {
     treeDataProvider: tree, showCollapseAll: true, canSelectMany: true,
     dragAndDropController: tree,
   });
+  tree.view = view;
   context.subscriptions.push(view, runner.out, ctl.onChanged(() => {
     tree.refresh();
     view.description = ctl.model ? ctl.model.sol.name : undefined;

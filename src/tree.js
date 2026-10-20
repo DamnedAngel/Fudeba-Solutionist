@@ -95,7 +95,7 @@ class SolutionTree {
     node.children = () => this.folderChildren(node, null);
     return this.make(node, `Solution '${m.sol.name}'`, vscode.TreeItemCollapsibleState.Expanded, {
       description: `${projects.length} project${projects.length === 1 ? '' : 's'}${m.config ? `  ·  ${configLabel(m.sol, m.config)}` : ''}`,
-      iconPath: this.ctl.icons.get(node.iconKey),
+      iconPath: this.ctl.icons.markedIcon(node.iconKey, this.ctl.scm ? this.ctl.scm.statusOf([m.sol.file]) : null),
       tooltip: m.sol.file,
       resourceUri: vscode.Uri.file(m.sol.file),
     });
@@ -145,7 +145,7 @@ class SolutionTree {
       // MSX projects get a ".msx" suffix: the settings button of the row is shown only for them
       contextValue: msxType ? `${node.kind}.msx` : node.kind,
       description: flags.join(' · ') || undefined,
-      iconPath: this.ctl.icons.get(iconKey, { color: startup ? new vscode.ThemeColor('charts.green') : undefined }),
+      iconPath: this.ctl.icons.markedIcon(iconKey, pd.exists && this.ctl.scm ? this.ctl.scm.statusOf([pd.file, pd.filtersFile || `${pd.file}.filters`]) : null, { color: startup ? new vscode.ThemeColor('charts.green') : undefined }),
       tooltip: new vscode.MarkdownString(
         `**${p.name}**  \n${pd.file}  \n\nConfiguration: \`${e.projectConfig || '-'}\`${pd.kind === 'makefile' ? `  \nMakefile project${msxType ? ` · MSX ${msxType.label}` : ''}` : ''}`),
     });
@@ -272,6 +272,13 @@ class SolutionTree {
       for (const m of files) edit.setItemFilter(entry.data.file, m.type, m.include, dest || null);
       for (const [from, to] of plan) edit.renameFilter(entry.data.file, from, to);
     }, 'Move');
+    await this.expand(target);
+  }
+
+  /** shows what was moved: the destination opens if it was collapsed (the tree was rebuilt, the node ids are stable) */
+  async expand(node) {
+    if (!this.view) return;
+    try { await this.view.reveal(node, { select: false, focus: false, expand: true }); } catch { /* the node is gone: nothing to show */ }
   }
 }
 
