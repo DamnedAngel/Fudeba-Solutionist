@@ -2,6 +2,7 @@
 const vscode = require('vscode');
 const { plan } = require('./core/build');
 const { configLabel } = require('./core/model');
+const { PropertiesPanel } = require('./propertiesPanel');
 const { runPlan, killTree } = require('./core/buildrun');
 
 const VERB = { build: 'Build', rebuild: 'Rebuild', clean: 'Clean' };
@@ -32,6 +33,13 @@ class Runner {
   async run(req) {
     if (this._running) { vscode.window.showWarningMessage('A build is already running.'); return false; }
     const ctl = this.ctl;
+    // Save All: the open files and the edits pending in the project settings pages, before anything is planned or run
+    await vscode.workspace.saveAll(false);
+    if (!(await PropertiesPanel.flushAll())) {
+      vscode.window.showErrorMessage('The build was not started: the project settings have errors and could not be saved. Fix them in the settings page.');
+      return false;
+    }
+    if (this._running) return false;
     if (!ctl.model) return false;
     const cfg = vscode.workspace.getConfiguration('fudebaSolutionist');
     let steps;
@@ -46,7 +54,6 @@ class Runner {
     this._running = true;
     this.cancelled = false;
     await vscode.commands.executeCommand('setContext', 'fudebaSolutionist.building', true);
-    await vscode.workspace.saveAll(false);
 
     const model = ctl.model;
     const title = req.ids && req.ids.length === 1 ? `${VERB[req.action]} ${model.entries.get(req.ids[0]).sln.name}` : `${VERB[req.action]} Solution`;

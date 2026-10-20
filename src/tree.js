@@ -231,12 +231,15 @@ class SolutionTree {
     });
   }
 
-  // ---- drag and drop: move files between the filters of a project -----------------------------
+  // ---- drag and drop: move files and filters between the filters of a project -----------------
 
   handleDrag(sources, dataTransfer) {
-    const files = sources.filter((s) => s.kind === 'file' && s.include && s.projectId);
-    if (!files.length) return;
-    dataTransfer.set(MIME, new vscode.DataTransferItem(files.map((f) => ({ projectId: f.projectId, include: f.include, type: f.itemType }))));
+    const items = [];
+    for (const s of sources) {
+      if (s.kind === 'file' && s.include && s.projectId) items.push({ projectId: s.projectId, include: s.include, type: s.itemType });
+      else if (s.kind === 'filter' && s.filter && s.projectId) items.push({ projectId: s.projectId, filter: s.filter });
+    }
+    if (items.length) dataTransfer.set(MIME, new vscode.DataTransferItem(items));
   }
 
   async handleDrop(target, dataTransfer) {
@@ -245,13 +248,30 @@ class SolutionTree {
     const moved = raw.value;
     const pid = target.projectId;
     if (!pid || (target.kind !== 'filter' && !/^project/.test(target.kind))) return;
-    if (moved.some((m) => m.projectId !== pid)) { vscode.window.showWarningMessage('Files can only be moved between the filters of the same project.'); return; }
+    if (moved.some((m) => m.projectId !== pid)) { vscode.window.showWarningMessage('Files and filters can only be moved within the same project.'); return; }
     const entry = this.ctl.model.entries.get(pid);
     if (!entry.data.filtersFile && target.kind === 'filter') return;
+    const dest = target.kind === 'filter' ? target.filter : '';
+    const lower = (x) => x.toLowerCase();
+    // a filter dragged together with one of its own ancestors travels with it
+    const filters = moved.filter((m) => m.filter).map((m) => m.filter)
+      .filter((f, i, all) => !all.some((o) => o !== f && lower(f).startsWith(lower(o) + '\\')));
+    const plan = [];
+    for (const f of filters) {
+      const leaf = f.split('\\').pop();
+      const to = dest ? `${dest}\\${leaf}` : leaf;
+      if (lower(to) === lower(f)) continue;                                             // already there
+      if (dest && (lower(dest) === lower(f) || lower(dest).startsWith(lower(f) + '\\'))) { vscode.window.showWarningMessage(`A filter cannot be moved into itself: "${f}".`); return; }
+      if (entry.data.filters.some((n) => lower(n) === lower(to))) { vscode.window.showWarningMessage(`"${dest || 'The project'}" already has a filter named "${leaf}".`); return; }
+      plan.push([f, to]);
+    }
+    const files = moved.filter((m) => m.include && !filters.some((f) => m.filter === f));
+    if (!plan.length && !files.length) return;
     await this.ctl.run(() => {
       const edit = require('./core/edit');
-      for (const m of moved) edit.setItemFilter(entry.data.file, m.type, m.include, target.kind === 'filter' ? target.filter : null);
-    }, 'Move file');
+      for (const m of files) edit.setItemFilter(entry.data.file, m.type, m.include, dest || null);
+      for (const [from, to] of plan) edit.renameFilter(entry.data.file, from, to);
+    }, 'Move');
   }
 }
 

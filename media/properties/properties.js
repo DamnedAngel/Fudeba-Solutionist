@@ -42,6 +42,10 @@
       if (cb) cb(m.value);
     } else if (m.type === 'saveFailed') {
       issues = m.issues; refreshIssues(); setBusy(false);
+    } else if (m.type === 'flush') {
+      // a build is about to start: apply the pending edits first (the host waits for the answer)
+      if (!dirty()) vscode.postMessage({ type: 'flushed' });
+      else { setBusy(true); vscode.postMessage({ type: 'save', pages: state.pages, close: false, flush: true }); }
     }
   });
 

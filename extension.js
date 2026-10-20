@@ -8,6 +8,7 @@ const { Icons } = require('./src/icons');
 const { Scm } = require('./src/scm');
 const { PropertiesPanel } = require('./src/propertiesPanel');
 const { AboutPanel } = require('./src/aboutPanel');
+const reveal = require('./src/reveal');
 const { register } = require('./src/commands');
 
 /** @returns the API used by the tests and by other extensions */
@@ -30,7 +31,8 @@ async function activate(context) {
   register(context, ctl, tree, runner, view);
   await vscode.commands.executeCommand('setContext', 'fudebaSolutionist.building', false);
   await ctl.openConfigured();
-  return { controller: ctl, tree, runner, problems, properties: PropertiesPanel, about: AboutPanel };
+  await reveal.runPending(context, ctl); // a solution created from the Start page: show it now that its folder is open
+  return { controller: ctl, tree, runner, problems, properties: PropertiesPanel, about: AboutPanel, reveal, context };
 }
 
 function deactivate() {}

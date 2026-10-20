@@ -35,7 +35,7 @@ class PropertiesPanel {
     this.panel.iconPath = vscode.Uri.joinPath(context.extensionUri, 'media', 'sln.svg');
     this.panel.webview.html = this.html(context);
     this.panel.webview.onDidReceiveMessage((m) => this.onMessage(m));
-    this.panel.onDidDispose(() => PropertiesPanel.panels.delete(projectId));
+    this.panel.onDidDispose(() => { this.settle(true); PropertiesPanel.panels.delete(projectId); });
     this.reload();
   }
 
@@ -126,6 +126,9 @@ class PropertiesPanel {
       case 'save':
         await this.save(m);
         break;
+      case 'flushed':
+        this.settle(true);
+        break;
       default: break;
     }
   }
@@ -151,12 +154,41 @@ class PropertiesPanel {
     }
   }
 
+  /** Applies the edits still pending in this dialog (a build must see them). @returns {Promise<boolean>} false when they could not be saved */
+  flush() {
+    return new Promise((resolve) => {
+      this.settle(true);
+      this._flush = resolve;
+      this._flushTimer = setTimeout(() => this.settle(true), 5000); // a page that never answers must not block the build
+      this.post({ type: 'flush' });
+    });
+  }
+
+  settle(ok) {
+    clearTimeout(this._flushTimer);
+    const r = this._flush;
+    this._flush = null;
+    if (r) r(ok);
+  }
+
+  /** Applies the pending edits of every open settings dialog. @returns {Promise<boolean>} */
+  static async flushAll() {
+    let ok = true;
+    for (const p of [...PropertiesPanel.panels.values()]) if (!(await p.flush())) ok = false;
+    return ok;
+  }
+
   async save(m) {
-    if (!this.sane(m.pages)) { this.post({ type: 'saveFailed', issues: [{ file: '', severity: 'error', message: 'The settings changed on disk structure; reopen the dialog.' }] }); return; }
+    try { await this.doSave(m); } finally { this.settle(!this._failed); this._failed = false; }
+  }
+
+  async doSave(m) {
+    this._failed = false;
+    if (!this.sane(m.pages)) { this._failed = true; this.post({ type: 'saveFailed', issues: [{ file: '', severity: 'error', message: 'The settings changed on disk structure; reopen the dialog.' }] }); return; }
     const fixed = normalizeEvents(m.pages); // backslashes in build event commands become "/"
     this.creating = new Set(m.create || []);
     const issues = this.check(m.pages);
-    if (issues.some((i) => i.severity === 'error')) { this.creating = new Set(); this.post({ type: 'saveFailed', issues }); return; }
+    if (issues.some((i) => i.severity === 'error')) { this._failed = true; this.creating = new Set(); this.post({ type: 'saveFailed', issues }); return; }
     let written = [];
     await this.ctl.run(() => {
       written = saveProjectConfig(this.cfg, m.pages, { create: m.create || [] });
@@ -176,5 +208,6 @@ class PropertiesPanel {
   }
 }
 PropertiesPanel.panels = new Map();
+PropertiesPanel.flushAll = PropertiesPanel.flushAll.bind(PropertiesPanel);
 
 module.exports = { PropertiesPanel };

@@ -4,6 +4,7 @@ const path = require('path');
 const { parseSolutionFile, projectConfigFor } = require('./sln');
 const { loadProject } = require('./project');
 const { normInclude } = require('./project');
+const { mapConfig } = require('./slnEdit');
 
 /**
  * @typedef {object} Entry
@@ -45,9 +46,17 @@ function loadModel(file, activeConfig) {
   const entries = new Map();
   for (const p of sol.projects) {
     if (p.isFolder) { entries.set(p.id, { sln: p, data: null, projectConfig: '', builds: false, deps: [] }); continue; }
-    const pc = projectConfigFor(sol, p.id, config);
+    let pc = projectConfigFor(sol, p.id, config);
     const [c, pl] = pc.cfg.split('|');
-    const data = loadProject(p.path, { config: c, platform: pl, solVars: vars });
+    let data = loadProject(p.path, { config: c, platform: pl, solVars: vars });
+    // a .slnx has no per-project configuration mapping: the solution's configuration is used as is, which for a
+    // C++ project means "x86" has to be read as the project's "Win32" (as Visual Studio maps it in a .sln)
+    if (sol.format === 'slnx' && data.exists && data.configs.length && !data.configs.some((x) => x.name.toLowerCase() === pc.cfg.toLowerCase())) {
+      const mapped = mapConfig(pc.cfg, data.configs);
+      const [c2, p2] = mapped.split('|');
+      data = loadProject(p.path, { config: c2, platform: p2, solVars: vars });
+      pc = { ...pc, cfg: mapped };
+    }
     entries.set(p.id, { sln: p, data, projectConfig: pc.cfg, builds: pc.build && data.exists, deps: [] });
   }
   // dependency ids: the solution's own list plus ProjectReference entries that resolve to a solution project

@@ -227,3 +227,27 @@ Separate from Alchemia Z (its own folder, its own repo-to-be). Nothing here is c
   user who set `slnExplorer.*` settings has to rename them (the author's own settings.json was migrated).
 - What the rename resets for an existing install: the extension's per-workspace memory (last solution, selected
   configuration, startup project). Uninstall the old `damnedangel.sln-explorer` when upgrading (two copies would clash).
+
+## Create a New Solution (File > New File, Welcome page, empty tree)
+
+- Command `fudebaSolutionist.newSolution` ("Create a New Solution..."): asks the location, the name and (setting
+  `fudebaSolutionist.newSolutionFormat` = ask | sln | slnx, default ask) the format, and writes `<location>/<name>/<name>.sln|slnx`
+  (`src/core/newSolution.js`), opens it, offers to add the folder to the workspace and to add a project from a template.
+- Three entry points, all running that command: `contributes.menus["file/newFile"]` (the entry of File > New File..., which the
+  Welcome page's "New File..." link opens too: VS Code does not let an extension add to the Welcome page's Start list),
+  `contributes.walkthroughs` (the "Get started with Fudeba Solutionist" card on the Welcome page, steps in media/walkthrough),
+  and `contributes.viewsWelcome` (the empty tree).
+- **The files must work in Visual Studio** (user requirement) and were checked against it, not just against our own parser:
+  Microsoft's own blank files (`dotnet new sln --format sln|slnx`) have the same layout as ours; the .sln has BOM, CRLF and no
+  empty ProjectConfigurationPlatforms section (it appears with the first project); Visual Studio 2022 17.14 and 2026 18.10
+  MSBuild read the blank .sln and .slnx and BUILT a real MSX ROM from a generated .sln and from a generated .slnx (via
+  `MSBuild.exe`; `test/newsolution.test.js` repeats the parse check wherever Visual Studio is installed, found with vswhere).
+  Not done: opening them in the Visual Studio IDE itself (no way to drive its UI from here).
+- A .slnx has no per-project configuration mapping, so the solution's `x86` is read as the C++ project's `Win32` (`model.js`),
+  as Visual Studio does; before this fix a Makefile project in a .slnx was read as a plain C++ project.
+- **Opening what was created** (found live: a solution created from the Start page was created but not shown): a created solution
+  is always opened. With a folder open, it is loaded and the Fudeba Solutionist view is shown (focus), and a solution outside the
+  workspace comes with the offer to add its folder. With NO folder open (the Start page), the solution's folder is opened as the
+  workspace (`vscode.openFolder`), which restarts the extension; the request is parked in the global state (`src/reveal.js`) and carried
+  out on the next start, when that solution is open: the view is shown and "Add a project to it now?" is offered. The parked
+  request and its use are tested; the full restart (openFolder) cannot be driven from the test host.

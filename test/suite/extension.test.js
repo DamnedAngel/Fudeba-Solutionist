@@ -240,6 +240,60 @@ suite('Solution Explorer', function () {
     await until(async () => !(await kids(await projectNode('Game'))).some((n) => label(n) === 'Audio'), 5000, 'filter deleted');
   });
 
+  test('filters: drag a filter (with what it holds) into another filter and back to the project', async () => {
+    const make = async (name) => {
+      const r = answer({ showInputBox: async () => name });
+      try { await vscode.commands.executeCommand('fudebaSolutionist.newFilter', await projectNode('Game')); } finally { r(); }
+      await until(async () => (await kids(await projectNode('Game'))).some((n) => label(n) === name), 5000, `filter ${name}`);
+    };
+    const top = async (name) => (await kids(await projectNode('Game'))).find((n) => label(n) === name);
+    await make('Outer');
+    await make('Inner');
+    const filtersFile = path.join(WS, 'Game', 'Game.vcxproj.filters');
+
+    // put a file in Inner, so something travels with it
+    const csrc = (await kids(await projectNode('Game'))).find((n) => label(n) === 'C Source Files');
+    const file = (await kids(csrc)).find((n) => label(n) === 'mdo.c');
+    const dt0 = new vscode.DataTransfer();
+    api.tree.handleDrag([file], dt0);
+    await api.tree.handleDrop(await top('Inner'), dt0);
+    await until(async () => (await kids(await top('Inner'))).some((f) => label(f) === 'mdo.c'), 5000, 'file in Inner');
+
+    // Inner into Outer
+    const dt = new vscode.DataTransfer();
+    api.tree.handleDrag([await top('Inner')], dt);
+    await api.tree.handleDrop(await top('Outer'), dt);
+    await until(async () => !(await top('Inner')), 5000, 'Inner left the project root');
+    const outer = await top('Outer');
+    const inner = (await kids(outer)).find((n) => label(n) === 'Inner');
+    assert.ok(inner, 'Inner is inside Outer');
+    assert.ok((await kids(inner)).some((f) => label(f) === 'mdo.c'), 'its file went with it');
+    assert.match(fs.readFileSync(filtersFile, 'utf8'), /<Filter>Outer\\Inner<\/Filter>/);
+
+    // a filter cannot go into itself or its own descendant
+    const dt1 = new vscode.DataTransfer();
+    api.tree.handleDrag([outer], dt1);
+    const warned = answer({ showWarningMessage: async () => undefined });
+    try { await api.tree.handleDrop(inner, dt1); } finally { warned(); }
+    assert.ok(await top('Outer'), 'Outer is still at the project root');
+
+    // and back to the project root: dropped on the project row
+    const dt2 = new vscode.DataTransfer();
+    api.tree.handleDrag([inner], dt2);
+    await api.tree.handleDrop(await projectNode('Game'), dt2);
+    await until(async () => !!(await top('Inner')), 5000, 'Inner is back at the project root');
+    assert.ok((await kids(await top('Inner'))).some((f) => label(f) === 'mdo.c'));
+
+    // tidy up: the file back, the filters gone
+    const dt3 = new vscode.DataTransfer();
+    api.tree.handleDrag([(await kids(await top('Inner'))).find((f) => label(f) === 'mdo.c')], dt3);
+    await api.tree.handleDrop((await kids(await projectNode('Game'))).find((n) => label(n) === 'C Source Files'), dt3);
+    await until(async () => !(await kids(await top('Inner'))).length, 5000, 'Inner is empty');
+    await vscode.commands.executeCommand('fudebaSolutionist.deleteFilter', await top('Inner'));
+    await vscode.commands.executeCommand('fudebaSolutionist.deleteFilter', await top('Outer'));
+    await until(async () => !(await top('Inner')) && !(await top('Outer')), 5000, 'filters deleted');
+  });
+
   test('remove a project from the solution: files stay, dependency lines go, startup is cleared', async () => {
     const file = api.controller.model.sol.file;
     const original = fs.readFileSync(file);
@@ -387,6 +441,76 @@ suite('Solution Explorer', function () {
     about.panel.dispose();
   });
 
+  test('Create a New Solution: File > New File, the Welcome walkthrough and the empty tree lead to a command that creates it', async function () {
+    this.timeout(30000);
+    const pkg = require('../../package.json');
+    const c = pkg.contributes;
+    assert.ok(c.menus['file/newFile'].some((m) => m.command === 'fudebaSolutionist.newSolution'), 'an entry in File > New File...');
+    assert.ok(c.walkthroughs[0].steps.some((s) => /command:fudebaSolutionist\.newSolution/.test(s.description)), 'a step of the Welcome walkthrough');
+    assert.ok(c.viewsWelcome.some((v) => v.view === 'fudebaSolutionist.tree' && /command:fudebaSolutionist\.newSolution/.test(v.contents)), 'the empty tree offers it');
+    const all = await vscode.commands.getCommands(true);
+    for (const link of JSON.stringify([c.viewsWelcome, c.walkthroughs]).match(/command:[A-Za-z.]+/g)) assert.ok(all.includes(link.slice(8)), `${link} is a registered command`);
+    for (const s of c.walkthroughs[0].steps) assert.ok(fs.existsSync(path.join(__dirname, '..', '..', s.media.markdown)), `${s.media.markdown} exists`);
+
+    const original = api.controller.model.sol.file;
+    const loc = fs.mkdtempSync(path.join(require('os').tmpdir(), 'slnx-newsol-'));
+    const run = async (name, quick) => {
+      const restore = answer({
+        showOpenDialog: async () => [vscode.Uri.file(loc)],
+        showInputBox: async () => name,
+        showQuickPick: quick || (async () => { throw new Error('the format must not be asked'); }),
+        showInformationMessage: async () => undefined,
+        showErrorMessage: async (m) => { throw new Error(`error shown to the user: ${m}`); },
+      });
+      try { await vscode.commands.executeCommand('fudebaSolutionist.newSolution'); } finally { restore(); }
+    };
+    try {
+      // the format is asked (the default) ...
+      await run('MySolution', async (items) => items.find((i) => i.f === 'slnx'));
+      const slnx = path.join(loc, 'MySolution', 'MySolution.slnx');
+      const same = (a, b) => path.resolve(a).toLowerCase() === path.resolve(b).toLowerCase(); // VS Code lower-cases the drive letter
+      await until(() => api.controller.model && same(api.controller.model.sol.file, slnx), 8000, 'the new solution is open');
+      assert.match(fs.readFileSync(slnx, 'utf8'), /^<Solution>/);
+      assert.deepStrictEqual(api.controller.model.sol.configs, ['Debug|x86', 'Release|x86']);
+      assert.strictEqual((await solutionRoot()).item.label, "Solution 'MySolution'");
+      // ... or fixed by the setting
+      await vscode.workspace.getConfiguration('fudebaSolutionist').update('newSolutionFormat', 'sln', vscode.ConfigurationTarget.Workspace);
+      await run('Second');
+      const sln = path.join(loc, 'Second', 'Second.sln');
+      assert.ok(fs.existsSync(sln));
+      await until(() => same(api.controller.model.sol.file, sln), 8000, 'the second solution is open');
+      assert.match(fs.readFileSync(sln, 'utf8'), /Microsoft Visual Studio Solution File, Format Version 12\.00/);
+    } finally {
+      await vscode.workspace.getConfiguration('fudebaSolutionist').update('newSolutionFormat', undefined, vscode.ConfigurationTarget.Workspace);
+      await api.controller.open(original);
+    }
+  });
+
+  test('a solution created from the Start page (no folder open) is shown once its folder has been opened', async function () {
+    const file = api.controller.model.sol.file;
+    const offered = [];
+    const restore = answer({ showInformationMessage: async (msg, ...buttons) => { offered.push([msg, buttons]); return undefined; } });
+    try {
+      // parked for this solution: the view is shown and the offer is made
+      await api.reveal.schedule(api.context, file, { addProject: true });
+      assert.strictEqual(await api.reveal.runPending(api.context, api.controller), true);
+      await until(() => offered.length === 1, 3000, 'the offer');
+      assert.match(offered[0][0], /Created .*\.sln\. Add a project to it now\?/);
+      assert.deepStrictEqual(offered[0][1], ['Add Project from Template...']);
+      assert.strictEqual(api.context.globalState.get(api.reveal.KEY), undefined, 'the request is used up');
+      // without the offer
+      await api.reveal.schedule(api.context, file, {});
+      assert.strictEqual(await api.reveal.runPending(api.context, api.controller), true);
+      await sleep(200);
+      assert.strictEqual(offered.length, 1, 'no offer when none was asked for');
+      // parked for another solution: dropped
+      await api.reveal.schedule(api.context, path.join(WS, 'Elsewhere', 'Other.sln'), { addProject: true });
+      assert.strictEqual(await api.reveal.runPending(api.context, api.controller), false);
+      assert.strictEqual(api.context.globalState.get(api.reveal.KEY), undefined);
+      assert.strictEqual(await api.reveal.runPending(api.context, api.controller), false, 'nothing parked: nothing to do');
+    } finally { restore(); }
+  });
+
   test('MSX project settings dialog: opens for MSX projects only, shows the pages of its type, checks and saves', async function () {
     this.timeout(30000);
     const cfgDir = path.join(WS, 'Game', 'Config');
@@ -455,6 +579,50 @@ suite('Solution Explorer', function () {
       assert.match(fs.readFileSync(`${vcx}.filters`, 'utf8'), /Config\\Symbols\.txt">\s*<Filter>Project Config<\/Filter>/, 'in the Config filter of the project');
       assert.ok(!p2.sent.filter((m) => m.type === 'init').pop().state.pages.some((p) => p.missing && p.file === 'Symbols.txt'), 'and no longer missing');
       p2.panel.dispose();
+    } finally {
+      fs.rmSync(cfgDir, { recursive: true, force: true });
+      if (had) { fs.mkdirSync(cfgDir, { recursive: true }); for (const [f, b] of backup) fs.writeFileSync(path.join(cfgDir, f), b); }
+      api.controller.reload();
+    }
+  });
+
+  test('build / rebuild / clean apply the edits pending in the MSX settings dialog first', async function () {
+    this.timeout(30000);
+    const cfgDir = path.join(WS, 'Game', 'Config');
+    const had = fs.existsSync(cfgDir);
+    const backup = had ? fs.readdirSync(cfgDir).map((f) => [f, fs.readFileSync(path.join(cfgDir, f))]) : [];
+    fs.mkdirSync(cfgDir, { recursive: true });
+    for (const f of fs.readdirSync(path.join(__dirname, '..', 'fixtures', 'msx-config', 'ROM', 'Config'))) fs.copyFileSync(path.join(__dirname, '..', 'fixtures', 'msx-config', 'ROM', 'Config', f), path.join(cfgDir, f));
+    try {
+      api.controller.reload();
+      const game = await projectNode('Game');
+      await vscode.commands.executeCommand('fudebaSolutionist.projectProperties', game);
+      const panel = api.properties.panels.get(game.projectId);
+      await panel.onMessage({ type: 'ready' });
+      const pages = JSON.parse(JSON.stringify(panel.sent.filter((m) => m.type === 'init').pop().state.pages));
+      const field = (k) => pages[0].groups.flatMap((g) => g.fields).find((f) => f.key === k);
+      // the dialog plays the page: on "flush" it sends its pending state like Apply does (or says it has nothing pending)
+      let pending = null;
+      const realPost = panel.post.bind(panel);
+      panel.post = (m) => {
+        if (m.type !== 'flush') realPost(m); // (the real page of the test host must not answer too)
+        if (m.type === 'flush') setTimeout(() => panel.onMessage(pending ? { type: 'save', pages: pending, close: false, flush: true } : { type: 'flushed' }), 0);
+      };
+      assert.strictEqual(await api.properties.flushAll(), true, 'nothing pending: nothing to do');
+
+      field('ROM_SIZE').value = '32k';
+      pending = pages;
+      assert.strictEqual(await api.properties.flushAll(), true);
+      assert.match(fs.readFileSync(path.join(cfgDir, 'ApplicationSettings.txt'), 'utf8'), /^ROM_SIZE\s+32k/m, 'the pending edit was written');
+
+      // pending edits with an error: not written, and no build is started
+      field('STACK_HIMEM').value = '_ON';
+      assert.strictEqual(await api.properties.flushAll(), false);
+      assert.match(fs.readFileSync(path.join(cfgDir, 'ApplicationSettings.txt'), 'utf8'), /^STACK_HIMEM\s+_OFF/m);
+      const before = api.runner.busy;
+      assert.strictEqual(await api.runner.run({ ids: null, action: 'clean' }), false, 'the run is refused');
+      assert.strictEqual(api.runner.busy, before, 'and nothing is left running');
+      panel.panel.dispose();
     } finally {
       fs.rmSync(cfgDir, { recursive: true, force: true });
       if (had) { fs.mkdirSync(cfgDir, { recursive: true }); for (const [f, b] of backup) fs.writeFileSync(path.join(cfgDir, f), b); }

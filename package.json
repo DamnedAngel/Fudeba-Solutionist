@@ -1,7 +1,10 @@
 {
   "name": "fudeba-solutionist",
   "displayName": "Fudeba Solutionist",
-  "repository": { "type": "git", "url": "https://github.com/DamnedAngel/Fudeba-Solutionist.git" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DamnedAngel/Fudeba-Solutionist.git"
+  },
   "description": "A Visual Studio-style Solution Explorer for generic Microsoft Visual Studio solutions (.sln/.slnx), with specialized features for MSX projects. It works in pair with the MSX templates for Visual Studio and the ZOO framework.",
   "version": "0.0.1",
   "publisher": "damnedangel",
@@ -67,11 +70,17 @@
     "viewsWelcome": [
       {
         "view": "fudebaSolutionist.tree",
-        "contents": "No solution found in this folder.\n[Open Solution...](command:fudebaSolutionist.openSolution)\n[New Project from Template...](command:fudebaSolutionist.newProject)",
+        "contents": "No solution found in this folder.\n[Create a New Solution...](command:fudebaSolutionist.newSolution)\n[Open Solution...](command:fudebaSolutionist.openSolution)\n[New Project from Template...](command:fudebaSolutionist.newProject)",
         "when": "!fudebaSolutionist.hasSolution"
       }
     ],
     "commands": [
+      {
+        "command": "fudebaSolutionist.newSolution",
+        "title": "Create a New Solution...",
+        "category": "Solution Explorer",
+        "icon": "$(new-folder)"
+      },
       {
         "command": "fudebaSolutionist.openSolution",
         "title": "Open Solution...",
@@ -355,6 +364,11 @@
           "command": "fudebaSolutionist.chooseIconTheme",
           "when": "view == fudebaSolutionist.tree",
           "group": "4_icons@1"
+        },
+        {
+          "command": "fudebaSolutionist.newSolution",
+          "when": "view == fudebaSolutionist.tree",
+          "group": "1_solution@0"
         }
       ],
       "view/item/context": [
@@ -550,6 +564,12 @@
           "command": "fudebaSolutionist.removeFromProject",
           "when": "false"
         }
+      ],
+      "file/newFile": [
+        {
+          "command": "fudebaSolutionist.newSolution",
+          "group": "solution"
+        }
       ]
     },
     "configuration": {
@@ -687,8 +707,84 @@
           ],
           "default": "mixed",
           "description": "Icons of the files inside projects."
+        },
+        "fudebaSolutionist.newSolutionFormat": {
+          "type": "string",
+          "enum": [
+            "ask",
+            "sln",
+            "slnx"
+          ],
+          "default": "ask",
+          "enumDescriptions": [
+            "Ask every time.",
+            "The classic .sln solution file.",
+            "The newer XML .slnx solution file (Visual Studio 2022 17.13 and later)."
+          ],
+          "description": "File format of a solution created with \"Create a New Solution...\"."
         }
       }
-    }
+    },
+    "walkthroughs": [
+      {
+        "id": "fudebaSolutionist.gettingStarted",
+        "title": "Get started with Fudeba Solutionist",
+        "description": "A Visual Studio-style Solution Explorer: solutions, projects, build actions and the MSX tools.",
+        "steps": [
+          {
+            "id": "create",
+            "title": "Create a solution",
+            "description": "Make an empty solution in a folder of its own.\n[Create a New Solution...](command:fudebaSolutionist.newSolution)",
+            "media": {
+              "markdown": "media/walkthrough/create.md"
+            },
+            "completionEvents": [
+              "onCommand:fudebaSolutionist.newSolution"
+            ]
+          },
+          {
+            "id": "project",
+            "title": "Add a project from a template",
+            "description": "Use the Visual Studio project templates, including the MSX ones.\n[New Project from Template...](command:fudebaSolutionist.newProject)",
+            "media": {
+              "markdown": "media/walkthrough/project.md"
+            },
+            "completionEvents": [
+              "onCommand:fudebaSolutionist.newProject"
+            ]
+          },
+          {
+            "id": "open",
+            "title": "Or open an existing solution",
+            "description": "Any .sln or .slnx, written on Windows or Linux.\n[Open Solution...](command:fudebaSolutionist.openSolution)",
+            "media": {
+              "markdown": "media/walkthrough/open.md"
+            },
+            "completionEvents": [
+              "onCommand:fudebaSolutionist.openSolution"
+            ]
+          },
+          {
+            "id": "build",
+            "title": "Pick a configuration and build",
+            "description": "Debug or Release is in the first row of the tree; build from a project or the whole solution.\n[Build Solution](command:fudebaSolutionist.buildSolution)",
+            "media": {
+              "markdown": "media/walkthrough/build.md"
+            },
+            "completionEvents": [
+              "onCommand:fudebaSolutionist.buildSolution"
+            ]
+          },
+          {
+            "id": "msx",
+            "title": "MSX projects",
+            "description": "Icons by project type and a settings dialog for the Config files of the templates.\n[About Fudeba Solutionist](command:fudebaSolutionist.about)",
+            "media": {
+              "markdown": "media/walkthrough/msx.md"
+            }
+          }
+        ]
+      }
+    ]
   }
 }

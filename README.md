@@ -7,6 +7,8 @@ Windows and Linux.
 
 > **Note:** the ZOO repository is currently private; it will eventually be made public.
 
+- **Create a New Solution...** (File > New File..., the Welcome page's walkthrough, or the empty tree): a blank `.sln` or `.slnx`
+  that opens in Visual Studio too.
 - **Generic**: any `.sln` / `.slnx` solution: projects, filters, per-project build actions, dependencies, new projects
   from Visual Studio project templates, source control marks.
 - **MSX**: project icons by type (ROM, COM, BIN, MDO), an MSX settings dialog for the Config files of the templates, build

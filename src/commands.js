@@ -13,6 +13,8 @@ const { PropertiesPanel } = require('./propertiesPanel');
 const { AboutPanel } = require('./aboutPanel');
 const { discoverTemplates, defaultTemplateRoots } = require('./core/vstemplate');
 const { createFromTemplate, validateName } = require('./core/newProject');
+const { createBlankSolution } = require('./core/newSolution');
+const reveal = require('./reveal');
 const { setSlnDependencies } = require('./core/sln');
 const { ZipArchive } = require('./core/zip');
 
@@ -37,6 +39,69 @@ function register(context, ctl, tree, runner, view) {
   }
 
   // ---- solution -------------------------------------------------------------------------------
+
+  /**
+   * A solution was created: open it, so that it is there to see. With no folder open (the Start page) the solution's folder is
+   * opened as the workspace, which restarts the extension (it then shows the view); with a folder open, the solution is
+   * loaded and its view shown, and a solution outside the workspace comes with the offer to add its folder.
+   * @param {{addProject?:boolean}} [opt] addProject: offer to add a project (made after the restart, in the first case)
+   * @returns {Promise<boolean>} true when the window is about to restart
+   */
+  async function openCreated(file, opt = {}) {
+    const folders = vscode.workspace.workspaceFolders || [];
+    if (!folders.length) {
+      await reveal.schedule(context, file, opt);
+      await vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(path.dirname(file)));
+      return true;
+    }
+    await ctl.open(file);
+    await reveal.showView();
+    const inWorkspace = folders.some((f) => !path.relative(f.uri.fsPath, file).startsWith('..'));
+    if (!inWorkspace) {
+      const c = await vscode.window.showInformationMessage(`Created ${path.basename(file)} outside the open workspace.`, 'Add Folder to Workspace', 'Open Folder');
+      if (c === 'Add Folder to Workspace') vscode.workspace.updateWorkspaceFolders(folders.length, 0, { uri: vscode.Uri.file(path.dirname(file)) });
+      else if (c === 'Open Folder') vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(path.dirname(file)));
+    }
+    return false;
+  }
+
+  /** Create a New Solution...: an empty solution in <location>/<name>/ (File > New File..., the Welcome walkthrough, the empty tree). */
+  reg('fudebaSolutionist.newSolution', async () => {
+    const wf = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0].uri.fsPath;
+    const last = context.globalState.get('fudebaSolutionist.lastLocation');
+    const loc = await vscode.window.showOpenDialog({ canSelectFiles: false, canSelectFolders: true, canSelectMany: false, defaultUri: vscode.Uri.file(last || wf || os.homedir()), openLabel: 'Select location', title: 'Where should the new solution directory be created?' });
+    if (!loc) return;
+    const location = loc[0].fsPath;
+    await context.globalState.update('fudebaSolutionist.lastLocation', location);
+    const taken = (n) => fs.existsSync(path.join(location, n));
+    let n = 1;
+    while (taken(`Solution${n}`)) n++;
+    const name = await vscode.window.showInputBox({
+      title: 'New solution', prompt: `Solution name (a folder of this name is created in ${location})`, value: `Solution${n}`,
+      validateInput: (v) => validateName(v) || (taken(v) ? 'A folder with this name already exists here.' : null),
+    });
+    if (!name) return;
+    let format = cfg().get('newSolutionFormat');
+    if (format !== 'sln' && format !== 'slnx') {
+      const pick = await vscode.window.showQuickPick(
+        [{ label: '.sln', description: 'The classic Visual Studio solution file; every tool reads it', f: 'sln' },
+          { label: '.slnx', description: 'The newer XML solution file (Visual Studio 2022 17.13 and later, .NET 9 SDK)', f: 'slnx' }],
+        { placeHolder: 'Solution file format' });
+      if (!pick) return;
+      format = pick.f;
+    }
+    let res;
+    ctl._selfWrite = true;
+    try {
+      res = createBlankSolution({ location, name, format });
+    } catch (e) {
+      vscode.window.showErrorMessage(`New solution: ${e.message}`);
+      return;
+    } finally { setTimeout(() => { ctl._selfWrite = false; }, 600); }
+    if (await openCreated(res.file, { addProject: true })) return; // the window restarts; the offer is made there
+    const next = await vscode.window.showInformationMessage(`Created ${path.basename(res.file)}. Add a project to it now?`, 'Add Project from Template...');
+    if (next) vscode.commands.executeCommand('fudebaSolutionist.newProject');
+  });
 
   reg('fudebaSolutionist.openSolution', async () => {
     const found = await ctl.findSolutions();
@@ -358,7 +423,7 @@ function register(context, ctl, tree, runner, view) {
     } else {
       const wf = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0].uri.fsPath;
       const last = context.globalState.get('fudebaSolutionist.lastLocation');
-      const loc = await vscode.window.showOpenDialog({ canSelectFiles: false, canSelectFolders: true, canSelectMany: false, defaultUri: vscode.Uri.file(last || wf || os.homedir()), openLabel: 'Select location', title: 'Where should the new solution be created?' });
+      const loc = await vscode.window.showOpenDialog({ canSelectFiles: false, canSelectFolders: true, canSelectMany: false, defaultUri: vscode.Uri.file(last || wf || os.homedir()), openLabel: 'Select location', title: 'Where should the new solution directory be created?' });
       if (!loc) return;
       const location = loc[0].fsPath;
       await context.globalState.update('fudebaSolutionist.lastLocation', location);
@@ -384,13 +449,7 @@ function register(context, ctl, tree, runner, view) {
       return;
     } finally { setTimeout(() => { ctl._selfWrite = false; }, 600); }
 
-    await ctl.open(res.solutionFile);
-    const inWorkspace = (vscode.workspace.workspaceFolders || []).some((f) => !path.relative(f.uri.fsPath, res.solutionFile).startsWith('..'));
-    if (!inWorkspace) {
-      const c = await vscode.window.showInformationMessage(`Created ${path.basename(res.solutionFile)} outside the open workspace.`, 'Add Folder to Workspace', 'Open Folder');
-      if (c === 'Add Folder to Workspace') vscode.workspace.updateWorkspaceFolders((vscode.workspace.workspaceFolders || []).length, 0, { uri: vscode.Uri.file(path.dirname(res.solutionFile)) });
-      else if (c === 'Open Folder') vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(path.dirname(res.solutionFile)));
-    }
+    if (await openCreated(res.solutionFile)) return; // an empty window: it restarts in the new folder
     const node = tree.cache.get(`prj:${[...ctl.model.entries.values()].find((p) => p.data && p.data.file === res.projectFile)?.sln.id}`);
     if (node) view.reveal(node, { select: true, focus: true }).then(undefined, () => {});
     vscode.window.setStatusBarMessage(`$(check) Created ${projectName} from ${t.name}`, 6000);
