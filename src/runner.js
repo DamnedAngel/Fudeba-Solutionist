@@ -54,6 +54,7 @@ class Runner {
     this._running = true;
     this.cancelled = false;
     await vscode.commands.executeCommand('setContext', 'fudebaSolutionist.building', true);
+    if (this.onState) this.onState();
 
     const model = ctl.model;
     const title = req.ids && req.ids.length === 1 ? `${VERB[req.action]} ${model.entries.get(req.ids[0]).sln.name}` : `${VERB[req.action]} Solution`;
@@ -106,6 +107,7 @@ class Runner {
       this._running = false;
       this.proc = null;
       await vscode.commands.executeCommand('setContext', 'fudebaSolutionist.building', false);
+      if (this.onState) this.onState();
     }
     const ok = !!result && !result.failed && !result.canceled;
     const text = `${VERB[req.action]}: ${result.succeeded} succeeded, ${result.failed} failed${result.skipped ? `, ${result.skipped} skipped` : ''}${result.canceled ? ' (canceled)' : ''}`;

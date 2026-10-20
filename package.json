@@ -31,7 +31,8 @@
     "workspaceContains:**/*.sln",
     "workspaceContains:**/*.slnx",
     "onView:fudebaSolutionist.tree",
-    "onCommand:fudebaSolutionist.newProject"
+    "onCommand:fudebaSolutionist.newProject",
+    "onWebviewPanel:fudebaSolutionist.treePanel"
   ],
   "extensionKind": [
     "workspace"
@@ -262,6 +263,18 @@
         "command": "fudebaSolutionist.reloadIcons",
         "title": "Reload Icons",
         "category": "Solution Explorer"
+      },
+      {
+        "command": "fudebaSolutionist.openInEditor",
+        "title": "Open Solution Explorer in Editor Tab",
+        "category": "Solution Explorer",
+        "icon": "$(link-external)"
+      },
+      {
+        "command": "fudebaSolutionist.popOut",
+        "title": "Pop Out Solution Explorer into a Window",
+        "category": "Solution Explorer",
+        "icon": "$(multiple-windows)"
       }
     ],
     "taskDefinitions": [
@@ -369,6 +382,16 @@
           "command": "fudebaSolutionist.newSolution",
           "when": "view == fudebaSolutionist.tree",
           "group": "1_solution@0"
+        },
+        {
+          "command": "fudebaSolutionist.openInEditor",
+          "when": "view == fudebaSolutionist.tree",
+          "group": "navigation@5"
+        },
+        {
+          "command": "fudebaSolutionist.popOut",
+          "when": "view == fudebaSolutionist.tree",
+          "group": "navigation@6"
         }
       ],
       "view/item/context": [

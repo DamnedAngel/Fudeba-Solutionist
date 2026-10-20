@@ -1,0 +1,54 @@
+/* The Solution Explorer as an editor tab: it looks like the side bar tree. */
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; padding: 0; }
+body {
+  display: flex; flex-direction: column; overflow: hidden;
+  color: var(--vscode-foreground); background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+  font-family: var(--vscode-font-family); font-size: var(--vscode-font-size);
+}
+#bar {
+  display: flex; align-items: center; justify-content: flex-end; gap: 2px; padding: 3px 6px; flex: none;
+  border-bottom: 1px solid var(--vscode-panel-border, rgba(128,128,128,.35));
+}
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 4px;
+  border: 0; border-radius: 4px; background: transparent; color: var(--vscode-icon-foreground, var(--vscode-foreground)); cursor: pointer;
+}
+.btn:hover { background: var(--vscode-toolbar-hoverBackground, rgba(128,128,128,.25)); }
+.btn .txt { font-size: .85em; }
+#tree { flex: 1; overflow: auto; outline: none; padding: 2px 0; }
+.row {
+  display: flex; align-items: center; height: 22px; padding-right: 6px; cursor: pointer; white-space: nowrap; user-select: none;
+}
+.row:hover { background: var(--vscode-list-hoverBackground); }
+.row.sel { background: var(--vscode-list-inactiveSelectionBackground); }
+#tree:focus .row.sel { background: var(--vscode-list-activeSelectionBackground); color: var(--vscode-list-activeSelectionForeground); }
+.row.drop { background: var(--vscode-list-dropBackground, rgba(0,120,215,.25)); outline: 1px dashed var(--vscode-focusBorder); outline-offset: -1px; }
+.twistie { width: 16px; flex: none; text-align: center; }
+.ico { width: 16px; height: 16px; flex: none; margin-right: 6px; display: inline-flex; align-items: center; justify-content: center; }
+.ico img { width: 16px; height: 16px; }
+body.vscode-light .ico .dark, body.vscode-high-contrast-light .ico .dark { display: none; }
+body:not(.vscode-light):not(.vscode-high-contrast-light) .ico .light { display: none; }
+.label { overflow: hidden; text-overflow: ellipsis; }
+.desc { margin-left: 8px; opacity: .65; font-size: .9em; overflow: hidden; text-overflow: ellipsis; }
+.row.missing .label { opacity: .6; text-decoration: line-through; }
+.inline { margin-left: auto; display: none; padding-left: 8px; }
+.row:hover .inline, .row.sel .inline { display: inline-flex; }
+.inline .btn { color: inherit; height: 20px; }
+#empty { padding: 16px; }
+#empty p { margin: 0 0 10px; }
+button.wide {
+  display: block; width: 100%; margin: 0 0 6px; padding: 5px 10px; border: 0; border-radius: 2px; cursor: pointer;
+  color: var(--vscode-button-foreground); background: var(--vscode-button-background); font: inherit;
+}
+button.wide:hover { background: var(--vscode-button-hoverBackground); }
+#menu {
+  position: fixed; z-index: 10; min-width: 190px; padding: 4px 0; border-radius: 5px;
+  background: var(--vscode-menu-background, var(--vscode-editorWidget-background)); color: var(--vscode-menu-foreground, var(--vscode-foreground));
+  border: 1px solid var(--vscode-menu-border, var(--vscode-widget-border, rgba(128,128,128,.4)));
+  box-shadow: 0 2px 8px var(--vscode-widget-shadow, rgba(0,0,0,.36));
+}
+#menu[hidden], #empty[hidden], #tree[hidden] { display: none; }
+.mi { padding: 4px 22px; cursor: pointer; white-space: nowrap; }
+.mi:hover { background: var(--vscode-menu-selectionBackground, var(--vscode-list-hoverBackground)); color: var(--vscode-menu-selectionForeground, inherit); }
+.sep { height: 1px; margin: 4px 0; background: var(--vscode-menu-separatorBackground, rgba(128,128,128,.4)); }

@@ -300,6 +300,57 @@ suite('Solution Explorer', function () {
     await until(async () => !(await top('Inner')) && !(await top('Outer')), 5000, 'filters deleted');
   });
 
+  test('the explorer in an editor tab: same rows, the menus of the view, clicks, commands and drag and drop', async () => {
+    await vscode.commands.executeCommand('fudebaSolutionist.openInEditor');
+    const tp = api.treePanel.current;
+    assert.ok(tp, 'the tab is open');
+    let last = null;
+    const realPost = tp.panel.webview.postMessage.bind(tp.panel.webview);
+    tp.panel.webview.postMessage = (m) => { last = m; return realPost(m); };
+    try {
+      await tp.onMessage({ type: 'ready' });
+      assert.strictEqual(last.type, 'tree');
+      assert.strictEqual(last.roots[0].kind, 'config');
+      const sln = last.roots.find((r) => r.kind === 'solution');
+      assert.ok(sln.open && sln.children.length, 'the solution row is open, with its projects');
+      const game = sln.children.find((c) => c.label === 'Game');
+      assert.ok(game.droppable && game.children.some((c) => c.kind === 'actions'));
+      const titles = last.menus[game.cv].menu.map((e) => e.title);
+      assert.ok(titles.includes('Rebuild') && titles.includes('Set as Startup Project') && titles.includes('Remove from Solution...'), titles.join());
+      assert.ok(last.menus[game.cv].inline.some((e) => e.command === 'fudebaSolutionist.build'), 'the inline Build button');
+      assert.ok(!last.menus['file'].menu.some((e) => e.command === 'fudebaSolutionist.deleteFilter'), 'filter commands are not offered on a file');
+      assert.ok(last.toolbar.buttons.some((b) => b.command === 'fudebaSolutionist.buildSolution' && b.codicon === 'play'));
+      assert.ok(last.toolbar.more.some((b) => b.command === 'fudebaSolutionist.openSolution'));
+
+      // a click runs the command of the row
+      const opened = [];
+      const realExec = vscode.commands.executeCommand;
+      vscode.commands.executeCommand = (c, ...a) => { opened.push(c); return c === 'fudebaSolutionist.selectConfiguration' ? undefined : realExec(c, ...a); };
+      try { await tp.onMessage({ type: 'click', id: 'cfg' }); } finally { vscode.commands.executeCommand = realExec; }
+      assert.deepStrictEqual(opened, ['fudebaSolutionist.selectConfiguration']);
+
+      // a command from a menu gets the node: make a filter, drop a file on it, drop the file back
+      const r = answer({ showInputBox: async () => 'TabF' });
+      try { await tp.onMessage({ type: 'run', command: 'fudebaSolutionist.newFilter', id: game.id }); } finally { r(); }
+      const top = async (name) => (await kids(await projectNode('Game'))).find((n) => label(n) === name);
+      await until(() => top('TabF'), 5000, 'filter TabF');
+      const csrc = (await kids(await projectNode('Game'))).find((n) => label(n) === 'C Source Files');
+      const file = (await kids(csrc)).find((n) => label(n) === 'mdo.c');
+      await tp.onMessage({ type: 'drop', target: (await top('TabF')).id, sources: [file.id] });
+      await until(async () => (await kids(await top('TabF'))).some((f) => label(f) === 'mdo.c'), 5000, 'file dropped on the filter');
+      await until(() => last.roots && JSON.stringify(last.roots).includes('"TabF"'), 5000, 'the tab shows the change');
+      const moved = (await kids(await top('TabF'))).find((f) => label(f) === 'mdo.c');
+      await tp.onMessage({ type: 'drop', target: csrc.id, sources: [moved.id] });
+      await until(async () => (await kids(await top('TabF'))).length === 0, 5000, 'file back');
+      await vscode.commands.executeCommand('fudebaSolutionist.deleteFilter', await top('TabF'));
+      await until(async () => !(await top('TabF')), 5000, 'filter deleted');
+    } finally {
+      tp.panel.webview.postMessage = realPost;
+      tp.panel.dispose();
+    }
+    assert.strictEqual(api.treePanel.current, null, 'closing the tab frees the slot');
+  });
+
   test('remove a project from the solution: files stay, dependency lines go, startup is cleared', async () => {
     const file = api.controller.model.sol.file;
     const original = fs.readFileSync(file);
