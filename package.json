@@ -311,6 +311,10 @@
         "when": "fudebaSolutionist.hasSolution && !fudebaSolutionist.building"
       },
       {
+        "command": "workbench.action.files.saveAll",
+        "key": "ctrl+shift+a"
+      },
+      {
         "command": "fudebaSolutionist.rebuildSolution",
         "key": "ctrl+shift+b",
         "when": "fudebaSolutionist.hasSolution && !fudebaSolutionist.building"
