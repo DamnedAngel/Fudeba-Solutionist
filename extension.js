@@ -25,6 +25,7 @@ async function activate(context) {
     dragAndDropController: tree,
   });
   tree.view = view;
+  context.subscriptions.push(...tree.attach(view));
   context.subscriptions.push(view, runner.out, ctl.onChanged(() => {
     tree.refresh();
     view.description = ctl.model ? ctl.model.sol.name : undefined;
@@ -38,10 +39,13 @@ async function activate(context) {
     vscode.commands.registerCommand('fudebaSolutionist.popOut', () => TreePanel.popOut(context, ctl, tree, runner)));
   await vscode.commands.executeCommand('setContext', 'fudebaSolutionist.building', false);
   await ctl.openConfigured();
+  tree.restoreSelection();
   await reveal.runPending(context, ctl); // a solution created from the Start page: show it now that its folder is open
+  current = tree.state;
   return { controller: ctl, tree, runner, problems, properties: PropertiesPanel, treePanel: TreePanel, about: AboutPanel, reveal, context };
 }
 
-function deactivate() {}
+let current = null;
+function deactivate() { return current && current.flush(); }
 
 module.exports = { activate, deactivate };

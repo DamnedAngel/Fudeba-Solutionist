@@ -5,6 +5,7 @@ const path = require('path');
 const { projectsOf, dependencySources, configLabel } = require('./core/model');
 const { commandFor } = require('./core/build');
 const { msxProjectType } = require('./core/msx');
+const { TreeState } = require('./treeState');
 
 const ACTIONS = [['build', 'Build'], ['rebuild', 'Rebuild'], ['clean', 'Clean']];
 const MIME = 'application/vnd.code.tree.fudebasolutionist';
@@ -47,6 +48,7 @@ class SolutionTree {
     this.dragMimeTypes = [MIME];
     this.dropMimeTypes = [MIME];
     this.cache = new Map();
+    this.state = new TreeState(ctl.context.workspaceState);
   }
 
   refresh() { this.cache.clear(); this._emitter.fire(); }
@@ -56,6 +58,7 @@ class SolutionTree {
   getChildren(node) {
     const ctl = this.ctl;
     if (!ctl.model) return [];
+    this.state.load(ctl.model.sol.file);
     if (!node) return [this.configNode(), this.solutionNode()];
     return node.children ? node.children() : [];
   }
@@ -65,6 +68,11 @@ class SolutionTree {
   // ---- node builders ------------------------------------------------------------------------
 
   make(node, label, state, extra = {}) {
+    // the expanded / collapsed state the user left this node in (the default when none was saved)
+    if (state !== vscode.TreeItemCollapsibleState.None) {
+      state = this.state.isExpanded(node.id, state === vscode.TreeItemCollapsibleState.Expanded)
+        ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed;
+    }
     const item = new vscode.TreeItem(label, state);
     item.id = node.id;
     item.contextValue = node.kind;
@@ -273,6 +281,28 @@ class SolutionTree {
       for (const [from, to] of plan) edit.renameFilter(entry.data.file, from, to);
     }, 'Move');
     await this.expand(target);
+  }
+
+  /** Follows the user's expanding, collapsing and selecting, and puts the selection back once the tree is first built. */
+  attach(view) {
+    this.view = view;
+    const sub = [
+      view.onDidExpandElement((e) => this.state.expand(e.element.id)),
+      view.onDidCollapseElement((e) => this.state.collapse(e.element.id)),
+      view.onDidChangeVisibility((e) => { if (e.visible && !this._selectionRestored) setTimeout(() => this.restoreSelection(), 200); }),
+      view.onDidChangeSelection((e) => { if (!this._restoring) this.state.select(e.selection[0] && e.selection[0].id); }),
+    ];
+    return sub;
+  }
+
+  /** Selects the node that was selected last time, if it is still there (its ancestors are expanded, so it is built). */
+  async restoreSelection() {
+    const id = this.state.selected;
+    const node = id && this.cache.get(id);
+    if (!node || !this.view) return;
+    this._selectionRestored = true;
+    this._restoring = true;
+    try { await this.view.reveal(node, { select: true, focus: false, expand: false }); } catch { /* gone */ } finally { this._restoring = false; }
   }
 
   /** shows what was moved: the destination opens if it was collapsed (the tree was rebuilt, the node ids are stable) */
